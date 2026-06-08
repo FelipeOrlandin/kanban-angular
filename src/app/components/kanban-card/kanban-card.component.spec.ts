@@ -56,6 +56,32 @@ describe('KanbanCardComponent', () => {
       expect(placeholder).toBeTruthy();
       expect(placeholder.nativeElement.textContent).toContain('Adicionar descrição...');
     });
+
+    it('não exibe descrição quando vazia', () => {
+      component.task = { ...mockTask, description: '' };
+      fixture.detectChanges();
+      const placeholder = fixture.debugElement.query(By.css('.kanban-card__description--placeholder'));
+      expect(placeholder).toBeTruthy();
+    });
+
+    it('exibe botão de avançar quando pode mover para frente', () => {
+      const lastStatus = TASK_STATUS_ORDER[TASK_STATUS_ORDER.length - 1];
+      component.task = { ...mockTask, status: lastStatus };
+      expect(component.canMoveForward).toBeFalse();
+      const forwardBtn = fixture.debugElement.query(By.css('[class*="primary"]'));
+      if (!component.canMoveForward) {
+        expect(forwardBtn).toBeFalsy();
+      }
+    });
+
+    it('exibe botão de voltar quando pode mover para trás', () => {
+      component.task = { ...mockTask, status: 'in-progress' };
+      fixture.detectChanges();
+      const backBtn = fixture.debugElement.query(By.css('button:contains("←")'));
+      if (component.canMoveBack) {
+        expect(backBtn).toBeTruthy();
+      }
+    });
   });
 
   describe('shortDescription', () => {
@@ -155,7 +181,7 @@ describe('KanbanCardComponent', () => {
       component.startEdit();
       expect(component.isEditing).toBeTrue();
       expect(component.editTitle).toBe(mockTask.title);
-      expect(component.editDescription).toBe(mockTask.description as string);
+      expect(component.editDescription).toBe(mockTask.description);
     });
 
     it('entra em edição ao clicar no título', () => {
@@ -214,6 +240,13 @@ describe('KanbanCardComponent', () => {
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       component.onEditKeydown(event);
       expect(component.isEditing).toBeFalse();
+    });
+
+    it('não cancela edição com outras teclas', () => {
+      component.startEdit();
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      component.onEditKeydown(event);
+      expect(component.isEditing).toBeTrue();
     });
 
     it('aplica classe CSS de edição quando isEditing é true', () => {

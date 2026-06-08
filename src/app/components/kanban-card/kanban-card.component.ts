@@ -24,29 +24,41 @@ export class KanbanCardComponent {
   @Output() moveBack = new EventEmitter<string>();
   @Output() update = new EventEmitter<TaskUpdatePayload>();
 
-  isEditing = false;
-  editTitle = '';
-  editDescription = '';
+  protected isEditing = false;
+  protected editTitle = '';
+  protected editDescription = '';
+  protected showModal = false;
 
-  /** Descrição truncada para exibição no card */
+  get shortTitle(): string {
+    const title = this.task.title;
+    if (!title) return '';
+    const maxLength = 50;
+    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+  }
+
   get shortDescription(): string {
-    if (!this.task.description) {
-      return '';
-    }
-    const max = 80;
-    return this.task.description.length > max
-      ? `${this.task.description.slice(0, max)}...`
-      : this.task.description;
+    const description = this.task.description;
+    if (!description) return '';
+    const maxLength = 80;
+    return description.length > maxLength ? `${description.slice(0, maxLength)}...` : description;
   }
 
   get canMoveForward(): boolean {
-    const index = TASK_STATUS_ORDER.indexOf(this.task.status);
-    return index < TASK_STATUS_ORDER.length - 1;
+    const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
+    return currentIndex < TASK_STATUS_ORDER.length - 1;
   }
 
   get canMoveBack(): boolean {
-    const index = TASK_STATUS_ORDER.indexOf(this.task.status);
-    return index > 0;
+    const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
+    return currentIndex > 0;
+  }
+
+  openModal(): void {
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
   }
 
   startEdit(): void {
@@ -55,40 +67,41 @@ export class KanbanCardComponent {
     this.isEditing = true;
   }
 
-  saveEdit(): void {
-    if (!this.editTitle.trim()) {
-      return;
-    }
-    this.update.emit({
-      id: this.task.id,
-      title: this.editTitle,
-      description: this.editDescription,
-    });
-    this.isEditing = false;
-  }
-
   cancelEdit(): void {
     this.isEditing = false;
   }
 
-  onEditKeydown(event: KeyboardEvent): void {
+  saveEdit(): void {
+    const trimmedTitle = this.editTitle.trim();
+    if (!trimmedTitle) return;
+
+    this.update.emit({
+      id: this.task.id,
+      title: trimmedTitle,
+      description: this.editDescription?.trim() || undefined,
+    });
+
+    this.isEditing = false;
+  }
+
+  protected onEditKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       event.preventDefault();
       this.cancelEdit();
     }
   }
 
-  onDelete(): void {
+  protected onDelete(): void {
     this.delete.emit(this.task.id);
   }
 
-  onMoveForward(): void {
+  protected onMoveForward(): void {
     if (this.canMoveForward) {
       this.moveForward.emit(this.task.id);
     }
   }
 
-  onMoveBack(): void {
+  protected onMoveBack(): void {
     if (this.canMoveBack) {
       this.moveBack.emit(this.task.id);
     }

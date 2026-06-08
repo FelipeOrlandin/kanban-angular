@@ -1,3 +1,4 @@
+/* Reset e estilo global */
 *,
 *::before,
 *::after {
@@ -6,6 +7,43 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  background: #f8fafc !important;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Dark mode no body – isso escurece o fundo da tela */
+body.dark-mode {
+  background: #0f172a !important;
+}
+
+/* Scrollbar moderna */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+/* Força o fundo do body e remove fundo do app-root */
+body, app-root {
+  background: #f8fafc !important;
+  display: block;
+  min-height: 100vh;
+}
+
+body.dark-mode, body.dark-mode app-root {
+  background: #0f172a !important;
 }

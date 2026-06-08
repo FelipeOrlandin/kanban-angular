@@ -1,48 +1,59 @@
 <div class="kanban-board">
   <header class="kanban-board__header">
-    <h1 class="kanban-board__title">Kanban Board</h1>
-
-    <form class="kanban-board__form" (ngSubmit)="onAddTask()">
-      <input
-        type="text"
-        class="kanban-board__input"
-        placeholder="Título da tarefa *"
-        [(ngModel)]="newTitle"
-        name="title"
-        required
-      />
-      <input
-        type="text"
-        class="kanban-board__input"
-        placeholder="Descrição (opcional)"
-        [(ngModel)]="newDescription"
-        name="description"
-      />
-      <button type="submit" class="kanban-board__submit" [disabled]="!newTitle.trim()">
-        Adicionar
+    <div class="kanban-board__header-left">
+      <h1 class="kanban-board__title">Kanban Board</h1>
+    </div>
+    <div class="kanban-board__header-right">
+      <button class="kanban-board__theme-toggle" (click)="toggleTheme()" type="button">
+        {{ isDarkMode ? '☀️ Light' : '🌙 Dark' }}
       </button>
-    </form>
+    </div>
   </header>
 
-  <div class="kanban-board__toolbar">
+  <form class="kanban-board__form" (ngSubmit)="onAddTask()">
     <input
-      type="search"
-      class="kanban-board__search"
-      placeholder="Buscar por título ou descrição..."
-      [(ngModel)]="searchText"
-      name="search"
+      type="text"
+      class="kanban-board__input"
+      placeholder="Título da tarefa *"
+      [(ngModel)]="newTitle"
+      name="title"
+      required
     />
-    <select class="kanban-board__sort" [(ngModel)]="sortMode" name="sort">
-      @for (option of sortOptions; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
+    <input
+      type="text"
+      class="kanban-board__input"
+      placeholder="Descrição (opcional)"
+      [(ngModel)]="newDescription"
+      name="description"
+    />
+    <button type="submit" class="kanban-board__submit" [disabled]="!newTitle.trim()">
+      + Adicionar
+    </button>
+  </form>
+
+  <div class="kanban-board__toolbar">
+    <div class="kanban-board__toolbar-left">
+      <input
+        type="search"
+        class="kanban-board__search"
+        placeholder="🔍 Buscar tarefa..."
+        [(ngModel)]="searchText"
+        name="search"
+      />
+    </div>
+    <div class="kanban-board__toolbar-right">
+      <select class="kanban-board__sort" [(ngModel)]="sortMode" name="sort">
+        @for (option of sortOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
   </div>
 
   <p class="kanban-board__counter">
-    {{ visibleTaskCount }} de {{ totalTaskCount }} tarefas visíveis
+    📊 {{ visibleTaskCount }} de {{ totalTaskCount }} tarefas
     @if (!isDragEnabled) {
-      <span class="kanban-board__counter-hint">· arrastar desabilitado</span>
+      <span class="kanban-board__counter-hint">🚫 arrastar desabilitado</span>
     }
   </p>
 

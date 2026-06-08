@@ -1,7 +1,7 @@
-<article class="kanban-card" [class.kanban-card--editing]="isEditing">
+<!-- Card com clique para abrir modal -->
+<article class="kanban-card" [class.kanban-card--editing]="isEditing" (click)="!isEditing && openModal()">
   @if (isEditing) {
-    <!-- Modo edição inline -->
-    <div class="kanban-card__edit" (keydown)="onEditKeydown($event)">
+    <div class="kanban-card__edit" (click)="$event.stopPropagation()" (keydown)="onEditKeydown($event)">
       <input
         type="text"
         class="kanban-card__input"
@@ -16,9 +16,7 @@
         rows="3"
       ></textarea>
       <div class="kanban-card__edit-actions">
-        <button type="button" class="kanban-card__btn" (click)="cancelEdit()">
-          Cancelar
-        </button>
+        <button type="button" class="kanban-card__btn" (click)="cancelEdit()">Cancelar</button>
         <button
           type="button"
           class="kanban-card__btn kanban-card__btn--primary"
@@ -31,57 +29,26 @@
     </div>
   } @else {
     <header class="kanban-card__header">
-      <h3
-        class="kanban-card__title kanban-card__title--editable"
-        (click)="startEdit()"
-        title="Clique para editar"
-      >
-        {{ task.title }}
+      <h3 class="kanban-card__title" title="{{ task.title }}">
+        {{ shortTitle }}
       </h3>
-      <div class="kanban-card__header-actions">
-        <button
-          type="button"
-          class="kanban-card__icon-btn"
-          (click)="startEdit()"
-          aria-label="Editar tarefa"
-          title="Editar"
-        >
-          ✎
-        </button>
-        <button
-          type="button"
-          class="kanban-card__delete"
-          (click)="onDelete()"
-          aria-label="Excluir tarefa"
-          title="Excluir"
-        >
-          ✕
-        </button>
+      <div class="kanban-card__header-actions" (click)="$event.stopPropagation()">
+        <button type="button" class="kanban-card__icon-btn" (click)="startEdit()" title="Editar">✎</button>
+        <button type="button" class="kanban-card__delete" (click)="onDelete()" title="Excluir">✕</button>
       </div>
     </header>
 
     @if (shortDescription) {
-      <p
-        class="kanban-card__description kanban-card__description--editable"
-        (click)="startEdit()"
-        title="Clique para editar"
-      >
+      <p class="kanban-card__description" title="{{ task.description }}">
         {{ shortDescription }}
       </p>
     } @else {
-      <p
-        class="kanban-card__description kanban-card__description--placeholder"
-        (click)="startEdit()"
-      >
-        Adicionar descrição...
-      </p>
+      <p class="kanban-card__description--placeholder">Adicionar descrição...</p>
     }
 
-    <footer class="kanban-card__actions">
+    <footer class="kanban-card__actions" (click)="$event.stopPropagation()">
       @if (canMoveBack) {
-        <button type="button" class="kanban-card__btn" (click)="onMoveBack()">
-          ← Voltar
-        </button>
+        <button type="button" class="kanban-card__btn" (click)="onMoveBack()">← Voltar</button>
       }
       @if (canMoveForward) {
         <button type="button" class="kanban-card__btn kanban-card__btn--primary" (click)="onMoveForward()">
@@ -91,3 +58,25 @@
     </footer>
   }
 </article>
+
+<!-- Modal de detalhes -->
+@if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ task.title }}</h2>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Descrição:</strong></p>
+        <p>{{ task.description || 'Sem descrição' }}</p>
+        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Criado em:</strong> {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>ID:</strong> {{ task.id }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+}

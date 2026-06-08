@@ -41,17 +41,22 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
   newDescription = '';
   searchText = '';
   sortMode: SortMode = 'manual';
-
+  isDarkMode = false;
   private subscription?: Subscription;
 
   constructor(private readonly kanbanService: KanbanService) {}
-
-  ngOnInit(): void {
-    this.subscription = this.kanbanService.tasks$.subscribe((tasks) => {
-      this.syncTasksByColumn(tasks);
-    });
+  
+    ngOnInit(): void {
+  this.subscription = this.kanbanService.tasks$.subscribe((tasks) => {
+    this.syncTasksByColumn(tasks);
+  });
+  const savedTheme = localStorage.getItem('kanban-theme');
+  if (savedTheme === 'dark') {
+    this.isDarkMode = true;
+    document.body.classList.add('dark-mode');
+    document.body.style.backgroundColor = '#0f172a';
   }
-
+}
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
@@ -176,4 +181,17 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
     }
     return undefined;
   }
+
+  toggleTheme(): void {
+  this.isDarkMode = !this.isDarkMode;
+  if (this.isDarkMode) {
+    document.body.classList.add('dark-mode');
+    document.body.style.backgroundColor = '#0f172a'; // fallback direto
+    localStorage.setItem('kanban-theme', 'dark');
+  } else {
+    document.body.classList.remove('dark-mode');
+    document.body.style.backgroundColor = ''; // remove o inline
+    localStorage.setItem('kanban-theme', 'light');
+  }
+}
 }
