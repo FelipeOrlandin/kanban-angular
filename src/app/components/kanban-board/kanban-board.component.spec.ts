@@ -1,3 +1,4 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
@@ -187,6 +188,33 @@ describe('KanbanBoardComponent', () => {
       getColumnComponents().forEach((col) => {
         expect(col.dragDisabled()).toBeFalse();
       });
+    });
+  });
+
+  describe('drag entre colunas', () => {
+    it('chama syncFromColumns ao soltar card entre colunas (move de coluna)', () => {
+      loadTasks([
+        createTask({ id: 'drag-1', title: 'Arrastar', status: 'todo', order: 0 }),
+      ]);
+
+      const columns = getColumnComponents();
+      const inProgressColumn = columns[1];
+      const todoTasks = component.tasksByColumn.todo;
+      const inProgressTasks = component.tasksByColumn['in-progress'];
+
+      inProgressColumn.onDrop({
+        previousContainer: { data: todoTasks },
+        container: { data: inProgressTasks },
+        previousIndex: 0,
+        currentIndex: 0,
+      } as CdkDragDrop<Task[]>);
+
+      component.onColumnDrop();
+
+      expect(kanbanService.syncFromColumns).toHaveBeenCalledWith(component.tasksByColumn);
+      expect(component.tasksByColumn.todo.length).toBe(0);
+      expect(component.tasksByColumn['in-progress'].length).toBe(1);
+      expect(component.tasksByColumn['in-progress'][0].id).toBe('drag-1');
     });
   });
 });
