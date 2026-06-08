@@ -1,10 +1,8 @@
 # Kanban Board
 
 [![Coverage](https://img.shields.io/badge/coverage-92.93%25-brightgreen)](https://github.com/FelipeOrlandin/kanban-angular)
-[![CI](https://github.com/FelipeOrlandin/kanban-angular/actions/workflows/ci.yml/badge.svg)](https://github.com/FelipeOrlandin/kanban-angular/actions/workflows/ci.yml)
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
-![Coverage](https://img.shields.io/badge/coverage-77%25-brightgreen)
 ## Development server
 
 To start a local development server, run:
@@ -63,7 +61,7 @@ For more information on using the Angular CLI, including detailed command refere
 
 ## Testes
 
-- 44 testes unitários (service + board)
+- 91 testes unitários (service + board)
 - Jasmine + Karma
 - Cobertura de lógica de negócio e interação
 - Pipeline CI com build automático
