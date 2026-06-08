@@ -1,0 +1,93 @@
+<article class="kanban-card" [class.kanban-card--editing]="isEditing">
+  @if (isEditing) {
+    <!-- Modo edição inline -->
+    <div class="kanban-card__edit" (keydown)="onEditKeydown($event)">
+      <input
+        type="text"
+        class="kanban-card__input"
+        [(ngModel)]="editTitle"
+        placeholder="Título *"
+        autofocus
+      />
+      <textarea
+        class="kanban-card__textarea"
+        [(ngModel)]="editDescription"
+        placeholder="Descrição (opcional)"
+        rows="3"
+      ></textarea>
+      <div class="kanban-card__edit-actions">
+        <button type="button" class="kanban-card__btn" (click)="cancelEdit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="kanban-card__btn kanban-card__btn--primary"
+          [disabled]="!editTitle.trim()"
+          (click)="saveEdit()"
+        >
+          Salvar
+        </button>
+      </div>
+    </div>
+  } @else {
+    <header class="kanban-card__header">
+      <h3
+        class="kanban-card__title kanban-card__title--editable"
+        (click)="startEdit()"
+        title="Clique para editar"
+      >
+        {{ task.title }}
+      </h3>
+      <div class="kanban-card__header-actions">
+        <button
+          type="button"
+          class="kanban-card__icon-btn"
+          (click)="startEdit()"
+          aria-label="Editar tarefa"
+          title="Editar"
+        >
+          ✎
+        </button>
+        <button
+          type="button"
+          class="kanban-card__delete"
+          (click)="onDelete()"
+          aria-label="Excluir tarefa"
+          title="Excluir"
+        >
+          ✕
+        </button>
+      </div>
+    </header>
+
+    @if (shortDescription) {
+      <p
+        class="kanban-card__description kanban-card__description--editable"
+        (click)="startEdit()"
+        title="Clique para editar"
+      >
+        {{ shortDescription }}
+      </p>
+    } @else {
+      <p
+        class="kanban-card__description kanban-card__description--placeholder"
+        (click)="startEdit()"
+      >
+        Adicionar descrição...
+      </p>
+    }
+
+    <footer class="kanban-card__actions">
+      @if (canMoveBack) {
+        <button type="button" class="kanban-card__btn" (click)="onMoveBack()">
+          ← Voltar
+        </button>
+      }
+      @if (canMoveForward) {
+        <button type="button" class="kanban-card__btn kanban-card__btn--primary" (click)="onMoveForward()">
+          Avançar →
+        </button>
+      }
+    </footer>
+  }
+</article>

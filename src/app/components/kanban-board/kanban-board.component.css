@@ -1,0 +1,130 @@
+.kanban-board {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.kanban-board__header {
+  margin-bottom: 20px;
+}
+
+.kanban-board__title {
+  margin: 0 0 16px;
+  font-size: 1.75rem;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.kanban-board__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.kanban-board__input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.kanban-board__input:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+.kanban-board__submit {
+  padding: 8px 20px;
+  background: #4a90d9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.kanban-board__submit:hover:not(:disabled) {
+  background: #3a7bc8;
+}
+
+.kanban-board__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.kanban-board__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.kanban-board__search {
+  flex: 2;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.kanban-board__search:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+.kanban-board__sort {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+.kanban-board__sort:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+}
+
+.kanban-board__counter {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+.kanban-board__counter-hint {
+  color: #999;
+}
+
+.kanban-board__columns {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .kanban-board__toolbar {
+    flex-direction: column;
+  }
+
+  .kanban-board__search,
+  .kanban-board__sort {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .kanban-board__columns {
+    flex-direction: column;
+  }
+}

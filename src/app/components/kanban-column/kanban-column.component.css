@@ -1,0 +1,137 @@
+.kanban-column {
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  flex: 1;
+  min-width: 0;
+  border-top: 3px solid transparent;
+}
+
+.kanban-column--todo {
+  background: #faf0f0;
+  border-top-color: #d4a0a0;
+}
+
+.kanban-column--in-progress {
+  background: #faf5ee;
+  border-top-color: #d4b88a;
+}
+
+.kanban-column--done {
+  background: #f0f7f1;
+  border-top-color: #9dc9a5;
+}
+
+.kanban-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 12px;
+  padding: 0 4px;
+  min-height: 28px;
+}
+
+.kanban-column__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.kanban-column__count {
+  position: absolute;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  color: #555;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.kanban-column--todo .kanban-column__count {
+  background: rgba(180, 100, 100, 0.15);
+  color: #8a5050;
+}
+
+.kanban-column--in-progress .kanban-column__count {
+  background: rgba(180, 140, 80, 0.15);
+  color: #8a6830;
+}
+
+.kanban-column--done .kanban-column__count {
+  background: rgba(80, 140, 90, 0.15);
+  color: #3d6b45;
+}
+
+.kanban-column__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 60px;
+}
+
+.kanban-column__drag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.kanban-column__drag-handle {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: grab;
+  font-size: 1rem;
+  padding: 10px 2px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.kanban-column__drag-handle:hover {
+  color: #666;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.kanban-column__drag-handle:active {
+  cursor: grabbing;
+}
+
+.kanban-column__card {
+  flex: 1;
+  min-width: 0;
+}
+
+.kanban-column__empty {
+  margin: 0;
+  text-align: center;
+  color: #888;
+  font-size: 0.85rem;
+  padding: 24px 8px;
+  pointer-events: none;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  opacity: 0.95;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.kanban-column__cards.cdk-drop-list-dragging .kanban-column__drag-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

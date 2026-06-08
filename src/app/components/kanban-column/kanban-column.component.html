@@ -1,0 +1,46 @@
+<section
+  class="kanban-column"
+  [class.kanban-column--todo]="status === 'todo'"
+  [class.kanban-column--in-progress]="status === 'in-progress'"
+  [class.kanban-column--done]="status === 'done'"
+>
+  <header class="kanban-column__header">
+    <h2 class="kanban-column__title">{{ title }}</h2>
+    <span class="kanban-column__count">{{ tasks.length }}</span>
+  </header>
+
+  <div
+    class="kanban-column__cards"
+    cdkDropList
+    [id]="status"
+    [cdkDropListData]="tasks"
+    [cdkDropListDisabled]="dragDisabled()"
+    (cdkDropListDropped)="onDrop($event)"
+  >
+    @for (task of tasks; track task.id) {
+      <div class="kanban-column__drag-item" cdkDrag [cdkDragDisabled]="dragDisabled()">
+        @if (!dragDisabled()) {
+          <button
+            type="button"
+            class="kanban-column__drag-handle"
+            cdkDragHandle
+            aria-label="Arrastar tarefa"
+            title="Arrastar"
+          >
+            ⠿
+          </button>
+        }
+        <app-kanban-card
+          class="kanban-column__card"
+          [task]="task"
+          (delete)="deleteTask.emit($event)"
+          (moveForward)="moveForward.emit($event)"
+          (moveBack)="moveBack.emit($event)"
+          (update)="updateTask.emit($event)"
+        />
+      </div>
+    } @empty {
+      <p class="kanban-column__empty">Nenhuma tarefa</p>
+    }
+  </div>
+</section>
