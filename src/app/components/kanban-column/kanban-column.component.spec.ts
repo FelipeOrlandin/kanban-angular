@@ -205,14 +205,14 @@ describe('KanbanColumnComponent', () => {
     });
   });
 
-  describe('cdkDropList configuration', () => {
-  it('possui cdkDropList com id baseado no status', () => {
-    const dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
-    expect(dropList.attributes['id']).toBe('todo');
+    describe('cdkDropList configuration', () => {
+    it('possui cdkDropList com id baseado no status', () => {
+      const dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
+      expect(dropList.attributes['id']).toBe('todo');
 
-    component.status = 'in-progress';
-    fixture.detectChanges();
-    expect(dropList.attributes['id']).toBe('in-progress');
+      component.status = 'in-progress';
+      fixture.detectChanges();
+      expect(dropList.attributes['id']).toBe('in-progress');
+    });
   });
-});
-});
+}); 
