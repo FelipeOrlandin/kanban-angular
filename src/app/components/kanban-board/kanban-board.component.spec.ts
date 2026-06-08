@@ -111,12 +111,68 @@ describe('KanbanBoardComponent', () => {
     expect(component.newDescription).toBe('');
   });
 
+  it('não deve adicionar tarefa com título vazio', () => {
+    fixture.detectChanges();
+
+    component.newTitle = '   ';
+    component.newDescription = 'Descrição';
+    fixture.detectChanges();
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    fixture.detectChanges();
+
+    expect(kanbanService.addTask).not.toHaveBeenCalled();
+    expect(component.newTitle).toBe('   ');
+  });
+
   it('deve chamar deleteTask ao receber evento do card', () => {
     loadTasks(mockTasks);
-
     component.onDeleteTask('2');
-
     expect(kanbanService.deleteTask).toHaveBeenCalledWith('2');
+  });
+
+  it('deve chamar updateTask ao receber evento do card', () => {
+    loadTasks(mockTasks);
+    component.onUpdateTask({ id: '1', title: 'Novo título', description: 'Nova desc' });
+    expect(kanbanService.updateTask).toHaveBeenCalledWith('1', 'Novo título', 'Nova desc');
+  });
+
+  it('deve chamar updateTask sem description quando não fornecida', () => {
+    loadTasks(mockTasks);
+    component.onUpdateTask({ id: '1', title: 'Só título' });
+    expect(kanbanService.updateTask).toHaveBeenCalledWith('1', 'Só título', undefined);
+  });
+
+  it('deve chamar moveForward para próxima coluna', () => {
+    loadTasks([createTask({ id: 'move-1', title: 'Mover', status: 'todo', order: 0 })]);
+    component.onMoveForward('move-1');
+    expect(kanbanService.moveTask).toHaveBeenCalledWith('move-1', 'in-progress');
+  });
+
+  it('não deve mover forward se já está na última coluna', () => {
+    loadTasks([createTask({ id: 'move-1', title: 'Mover', status: 'done', order: 0 })]);
+    component.onMoveForward('move-1');
+    expect(kanbanService.moveTask).not.toHaveBeenCalled();
+  });
+
+  it('deve chamar moveBack para coluna anterior', () => {
+    loadTasks([createTask({ id: 'move-1', title: 'Mover', status: 'in-progress', order: 0 })]);
+    component.onMoveBack('move-1');
+    expect(kanbanService.moveTask).toHaveBeenCalledWith('move-1', 'todo');
+  });
+
+  it('não deve mover back se já está na primeira coluna', () => {
+    loadTasks([createTask({ id: 'move-1', title: 'Mover', status: 'todo', order: 0 })]);
+    component.onMoveBack('move-1');
+    expect(kanbanService.moveTask).not.toHaveBeenCalled();
+  });
+
+  it('não deve mover se task não existe', () => {
+    loadTasks(mockTasks);
+    component.onMoveForward('inexistente');
+    component.onMoveBack('inexistente');
+    expect(kanbanService.moveTask).not.toHaveBeenCalled();
   });
 
   describe('filtro (searchText)', () => {
@@ -137,6 +193,14 @@ describe('KanbanBoardComponent', () => {
       component.sortMode = 'manual';
       expect(component.filteredAndSortedTasksByColumn.todo).toBe(component.tasksByColumn.todo);
     });
+
+    it('filtro vazio retorna todas tarefas', () => {
+      component.searchText = '';
+      fixture.detectChanges();
+      const result = component.filteredAndSortedTasksByColumn;
+      expect(result.todo.length).toBe(2);
+      expect(result.done.length).toBe(1);
+    });
   });
 
   describe('ordenação por createdAt', () => {
@@ -150,6 +214,13 @@ describe('KanbanBoardComponent', () => {
 
     it('ordena por mais antigos', () => {
       component.sortMode = 'oldest';
+      const todoIds = component.filteredAndSortedTasksByColumn.todo.map((t) => t.id);
+      expect(todoIds).toEqual(['1', '2']);
+    });
+
+    it('ordena manual por order', () => {
+      component.sortMode = 'manual';
+      component.searchText = 'task';
       const todoIds = component.filteredAndSortedTasksByColumn.todo.map((t) => t.id);
       expect(todoIds).toEqual(['1', '2']);
     });
@@ -191,8 +262,29 @@ describe('KanbanBoardComponent', () => {
     });
   });
 
+  describe('contadores', () => {
+    beforeEach(() => loadTasks(mockTasks));
+
+    it('totalTaskCount soma todas tarefas', () => {
+      expect(component.totalTaskCount).toBe(3);
+    });
+
+    it('visibleTaskCount com filtro ativo', () => {
+      component.searchText = 'alpha';
+      fixture.detectChanges();
+      expect(component.visibleTaskCount).toBe(1);
+    });
+
+    it('visibleTaskCount sem filtro', () => {
+      component.searchText = '';
+      component.sortMode = 'manual';
+      fixture.detectChanges();
+      expect(component.visibleTaskCount).toBe(3);
+    });
+  });
+
   describe('drag entre colunas', () => {
-    it('chama syncFromColumns ao soltar card entre colunas (move de coluna)', () => {
+    it('chama syncFromColumns ao soltar card', () => {
       loadTasks([
         createTask({ id: 'drag-1', title: 'Arrastar', status: 'todo', order: 0 }),
       ]);
@@ -215,6 +307,45 @@ describe('KanbanBoardComponent', () => {
       expect(component.tasksByColumn.todo.length).toBe(0);
       expect(component.tasksByColumn['in-progress'].length).toBe(1);
       expect(component.tasksByColumn['in-progress'][0].id).toBe('drag-1');
+    });
+  });
+
+  describe('syncTasksByColumn (subscription)', () => {
+    it('atualiza tasksByColumn quando service emite novas tasks', () => {
+      const initialTasks = [createTask({ id: '1', title: 'Task 1', status: 'todo', order: 0 })];
+      loadTasks(initialTasks);
+      expect(component.tasksByColumn.todo.length).toBe(1);
+
+      const newTasks = [
+        createTask({ id: '1', title: 'Task 1', status: 'in-progress', order: 0 }),
+      ];
+      tasksSubject.next(newTasks);
+      fixture.detectChanges();
+
+      expect(component.tasksByColumn.todo.length).toBe(0);
+      expect(component.tasksByColumn['in-progress'].length).toBe(1);
+    });
+  });
+
+  describe('ordenação combinada com filtro', () => {
+    beforeEach(() => loadTasks(mockTasks));
+
+    it('filtra primeiro, depois ordena por newest', () => {
+      component.searchText = 'task';
+      component.sortMode = 'newest';
+      fixture.detectChanges();
+
+      const todoIds = component.filteredAndSortedTasksByColumn.todo.map(t => t.id);
+      expect(todoIds).toEqual(['2', '1']);
+    });
+
+    it('filtra primeiro, depois ordena por oldest', () => {
+      component.searchText = 'task';
+      component.sortMode = 'oldest';
+      fixture.detectChanges();
+
+      const todoIds = component.filteredAndSortedTasksByColumn.todo.map(t => t.id);
+      expect(todoIds).toEqual(['1', '2']);
     });
   });
 });
