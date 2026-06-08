@@ -61,7 +61,7 @@ For more information on using the Angular CLI, including detailed command refere
 
 ## Testes
 
-- 44 testes unitários (service + board)
+- 91 testes unitários (service + board)
 - Jasmine + Karma
 - Cobertura de lógica de negócio e interação
 - Pipeline CI com build automático
