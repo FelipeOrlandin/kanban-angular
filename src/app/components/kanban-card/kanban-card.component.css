@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   transition: all var(--transition-base);
-  will-change: transform, box-shadow, background;
+  /* removido will-change: transform, box-shadow, background; */
   position: relative;
   overflow: hidden;
 }
@@ -30,13 +30,13 @@
 
 .kanban-card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
+  transform: translateY(-2px); /* antes -4px, ajustado para suavidade sem perder efeito */
   border-color: rgba(59, 130, 246, 0.3);
   background: rgba(255, 255, 255, 0.95);
 }
 
 .kanban-card:active {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .kanban-card--editing {
@@ -75,7 +75,7 @@
   flex-shrink: 0;
   opacity: 0;
   transition: opacity var(--transition-fast);
-  will-change: opacity;
+  /* removido will-change: opacity; */
 }
 
 .kanban-card:hover .kanban-card__header-actions {
@@ -95,19 +95,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: background, color;
+  /* removido will-change: background, color; */
 }
 
 .kanban-card__icon-btn:hover {
   background: rgba(59, 130, 246, 0.1);
   color: var(--color-primary);
-  transform: scale(1.1);
+  transform: scale(1.05); /* antes 1.1, reduzido para suavidade */
 }
 
 .kanban-card__delete:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* Descrição */
@@ -151,15 +151,15 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   color: var(--color-text-light-secondary);
-  backdrop-filter: blur(4px);
-  will-change: background, border-color, transform;
+  /* removido backdrop-filter: blur(4px); para evitar custo desnecessário */
+  /* removido will-change: background, border-color, transform; */
   letter-spacing: 0.2px;
 }
 
 .kanban-card__btn:hover {
   background: var(--color-bg-light-secondary);
   border-color: var(--color-border-light-secondary);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-xs);
 }
 
@@ -199,7 +199,7 @@
   background: rgba(255, 255, 255, 0.8);
   color: var(--color-text-light);
   transition: all var(--transition-fast);
-  will-change: border-color, box-shadow;
+  /* removido will-change: border-color, box-shadow; */
 }
 
 .kanban-card__input:focus,
@@ -230,18 +230,12 @@
   justify-content: center;
   z-index: 1000;
   animation: overlayIn 0.2s ease;
-  will-change: background;
+  /* removido will-change: background; */
 }
 
 @keyframes overlayIn {
-  from {
-    background: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(0px);
-  }
-  to {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-  }
+  from { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); }
+  to { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); }
 }
 
 .modal-content {
@@ -255,18 +249,12 @@
   overflow-y: auto;
   box-shadow: var(--shadow-2xl);
   animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform, opacity;
+  /* removido will-change: transform, opacity; */
 }
 
 @keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-header {
@@ -299,13 +287,13 @@
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
-  will-change: background, color;
+  /* removido will-change: background, color; */
 }
 
 .modal-close:hover {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
-  transform: rotate(90deg) scale(1.1);
+  transform: rotate(90deg) scale(1.05);
 }
 
 .modal-body {
@@ -343,7 +331,7 @@
   font-weight: 700;
   font-size: 0.875rem;
   transition: all var(--transition-fast);
-  will-change: transform, box-shadow;
+  /* removido will-change: transform, box-shadow; */
   letter-spacing: 0.3px;
 }
 
@@ -358,59 +346,20 @@
 
 /* Responsivo */
 @media (max-width: 768px) {
-  .kanban-card {
-    min-height: 100px;
-    padding: 12px;
-  }
-
-  .kanban-card__title {
-    font-size: 0.875rem;
-  }
-
-  .kanban-card__description {
-    font-size: 0.75rem;
-  }
-
-  .modal-content {
-    max-height: 90vh;
-    border-radius: var(--radius-xl);
-  }
-
-  .modal-header {
-    padding: 16px 20px;
-  }
-
-  .modal-header h2 {
-    font-size: 1.25rem;
-  }
-
-  .modal-body {
-    padding: 20px;
-  }
-
-  .modal-footer {
-    padding: 16px 20px;
-  }
+  .kanban-card { min-height: 100px; padding: 12px; }
+  .kanban-card__title { font-size: 0.875rem; }
+  .kanban-card__description { font-size: 0.75rem; }
+  .modal-content { max-height: 90vh; border-radius: var(--radius-xl); }
+  .modal-header { padding: 16px 20px; }
+  .modal-header h2 { font-size: 1.25rem; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 16px 20px; }
 }
-
 @media (max-width: 480px) {
-  .kanban-card {
-    min-height: 90px;
-    padding: 10px;
-  }
-
-  .kanban-card__title {
-    font-size: 0.8125rem;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-
-  .modal-btn {
-    padding: 8px 16px;
-    font-size: 0.8125rem;
-  }
+  .kanban-card { min-height: 90px; padding: 10px; }
+  .kanban-card__title { font-size: 0.8125rem; }
+  .modal-content { width: 95%; }
+  .modal-btn { padding: 8px 16px; font-size: 0.8125rem; }
 }
 
 /* ===== DARK MODE ===== */
@@ -418,117 +367,95 @@
   background: rgba(52, 65, 84, 0.85);
   border-color: rgba(148, 163, 184, 0.2);
 }
-
 :host-context(body.dark-mode) .kanban-card:hover {
   background: rgba(52, 65, 84, 0.95);
   border-color: rgba(59, 130, 246, 0.4);
   box-shadow: var(--shadow-lg);
 }
-
 :host-context(body.dark-mode) .kanban-card--editing {
   background: rgba(52, 65, 84, 0.95);
   border-color: var(--color-primary);
   box-shadow: var(--shadow-md), 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
-
 :host-context(body.dark-mode) .kanban-card__title {
   color: #f1f5f9;
 }
-
 :host-context(body.dark-mode) .kanban-card__description {
   color: #cbd5e1;
 }
-
 :host-context(body.dark-mode) .kanban-card__description--placeholder {
   color: var(--color-text-light-tertiary);
 }
-
 :host-context(body.dark-mode) .kanban-card__icon-btn,
 :host-context(body.dark-mode) .kanban-card__delete {
   color: #cbd5e1;
 }
-
 :host-context(body.dark-mode) .kanban-card__icon-btn:hover {
   background: rgba(59, 130, 246, 0.2);
   color: var(--color-primary-light);
 }
-
 :host-context(body.dark-mode) .kanban-card__delete:hover {
   background: rgba(239, 68, 68, 0.2);
   color: #fca5a5;
 }
-
 :host-context(body.dark-mode) .kanban-card__actions {
   border-top-color: rgba(148, 163, 184, 0.2);
 }
-
 :host-context(body.dark-mode) .kanban-card__btn {
   background: rgba(71, 85, 105, 0.6);
   border-color: rgba(148, 163, 184, 0.3);
   color: #cbd5e1;
 }
-
 :host-context(body.dark-mode) .kanban-card__btn:hover {
   background: rgba(100, 116, 139, 0.7);
   border-color: rgba(148, 163, 184, 0.5);
   color: #e2e8f0;
 }
-
 :host-context(body.dark-mode) .kanban-card__btn--primary {
   background: linear-gradient(135deg, rgba(30, 58, 95, 0.8), rgba(37, 99, 235, 0.6));
   border-color: var(--color-primary);
   color: var(--color-primary-light);
 }
-
 :host-context(body.dark-mode) .kanban-card__btn--primary:hover {
   background: linear-gradient(135deg, rgba(37, 99, 235, 0.7), rgba(59, 130, 246, 0.7));
   border-color: var(--color-primary-light);
 }
-
 :host-context(body.dark-mode) .kanban-card__input,
 :host-context(body.dark-mode) .kanban-card__textarea {
   background: rgba(71, 85, 105, 0.8);
   border-color: rgba(148, 163, 184, 0.3);
   color: #f1f5f9;
 }
-
 :host-context(body.dark-mode) .kanban-card__input:focus,
 :host-context(body.dark-mode) .kanban-card__textarea:focus {
   background: rgba(71, 85, 105, 0.95);
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
-
 :host-context(body.dark-mode) .modal-content {
   background: rgba(30, 41, 59, 0.95);
   border-color: rgba(148, 163, 184, 0.2);
   color: #e2e8f0;
 }
-
 :host-context(body.dark-mode) .modal-header,
 :host-context(body.dark-mode) .modal-footer {
   border-color: rgba(148, 163, 184, 0.15);
   background: linear-gradient(135deg, rgba(52, 65, 84, 0.3), rgba(30, 41, 59, 0.2));
 }
-
 :host-context(body.dark-mode) .modal-header h2 {
   color: #f1f5f9;
 }
-
 :host-context(body.dark-mode) .modal-close {
   background: rgba(255, 255, 255, 0.1);
   color: #94a3b8;
 }
-
 :host-context(body.dark-mode) .modal-close:hover {
   background: rgba(239, 68, 68, 0.2);
   color: #fca5a5;
 }
-
 :host-context(body.dark-mode) .modal-body {
   color: #cbd5e1;
 }
-
 :host-context(body.dark-mode) .modal-body strong {
   color: #f1f5f9;
 }

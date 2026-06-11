@@ -5,7 +5,11 @@
     </div>
     <div class="kanban-board__header-right">
       <button class="kanban-board__theme-toggle" (click)="toggleTheme()" type="button">
-        {{ isDarkMode ? '☀️ Light' : '🌙 Dark' }}
+        @if (!isDarkMode) {
+          <i class='bx bx-moon'></i> Dark
+        } @else {
+          <i class='bx bx-sun'></i> Light
+        }
       </button>
     </div>
   </header>
@@ -33,10 +37,11 @@
 
   <div class="kanban-board__toolbar">
     <div class="kanban-board__toolbar-left">
+      <i class='bx bx-search'></i>
       <input
         type="search"
         class="kanban-board__search"
-        placeholder="🔍 Buscar tarefa..."
+        placeholder="Buscar tarefa..."
         [(ngModel)]="searchText"
         name="search"
       />
@@ -51,9 +56,11 @@
   </div>
 
   <p class="kanban-board__counter">
-    📊 {{ visibleTaskCount }} de {{ totalTaskCount }} tarefas
+    <i class='bx bx-bar-chart'></i> {{ visibleTaskCount }} de {{ totalTaskCount }} tarefas
     @if (!isDragEnabled) {
-      <span class="kanban-board__counter-hint">🚫 arrastar desabilitado</span>
+      <span class="kanban-board__counter-hint">
+        <i class='bx bx-block'></i> arrastar desabilitado
+      </span>
     }
   </p>
 

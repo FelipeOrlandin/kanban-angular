@@ -1,6 +1,5 @@
 /* ===== CSS VARIABLES - Design System ===== */
 :root {
-  /* Colors */
   --color-primary: #3b82f6;
   --color-primary-dark: #2563eb;
   --color-primary-light: #60a5fa;
@@ -18,7 +17,6 @@
   --color-border-light: #e2e8f0;
   --color-border-light-secondary: #cbd5e1;
 
-  /* Shadows - Light mode */
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
@@ -26,23 +24,19 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.12);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 
-  /* Shadows - Hover/Elevation */
   --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.12);
   --shadow-drag: 0 25px 40px rgba(0, 0, 0, 0.15);
 
-  /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Border radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-2xl: 24px;
 
-  /* Glass effect */
   --glass-blur: 16px;
   --glass-opacity: 0.8;
 }
@@ -54,11 +48,9 @@ body.dark-mode {
   --color-text-light: #f1f5f9;
   --color-text-light-secondary: #cbd5e1;
   --color-text-light-tertiary: #94a3b8;
-
   --color-border-light: #334155;
   --color-border-light-secondary: #475569;
 
-  /* Shadows - Dark mode (mais suaves) */
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
@@ -67,7 +59,6 @@ body.dark-mode {
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Reset e estilo global */
 *,
 *::before,
 *::after {
@@ -88,16 +79,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar moderna com vidro */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
   background: var(--color-text-light-tertiary);
   border-radius: 10px;
@@ -106,19 +94,15 @@ body {
   background-clip: padding-box;
   transition: background 0.2s ease;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-light-secondary);
   background-clip: padding-box;
 }
-
-/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-text-light-tertiary) transparent;
 }
 
-/* Força o fundo do body e remove fundo do app-root */
 body, app-root {
   background: var(--color-bg-light) !important;
   display: block;

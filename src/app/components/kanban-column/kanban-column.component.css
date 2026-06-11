@@ -13,7 +13,7 @@
   transition: all var(--transition-base);
   flex: 1;
   min-height: 500px;
-  will-change: box-shadow, background;
+  /* removido will-change: box-shadow, background; */
   overflow: hidden;
 }
 
@@ -33,7 +33,7 @@
   flex-direction: column;
   gap: 14px;
   scroll-behavior: smooth;
-  will-change: scroll-position;
+  /* removido will-change: scroll-position; */
 }
 
 /* Cabeçalho da Coluna */
@@ -53,13 +53,11 @@
   border-bottom: 3px solid #ef4444;
   box-shadow: inset 0 2px 4px rgba(239, 68, 68, 0.1);
 }
-
 .kanban-column--in-progress .kanban-column__header {
   background: linear-gradient(135deg, rgba(255, 247, 237, 0.95), rgba(255, 237, 213, 0.95));
   border-bottom: 3px solid #f59e0b;
   box-shadow: inset 0 2px 4px rgba(245, 158, 11, 0.1);
 }
-
 .kanban-column--done .kanban-column__header {
   background: linear-gradient(135deg, rgba(240, 253, 244, 0.95), rgba(220, 252, 231, 0.95));
   border-bottom: 3px solid #22c55e;
@@ -87,13 +85,13 @@
   align-items: center;
   justify-content: center;
   min-width: 28px;
-  backdrop-filter: blur(4px);
+  /* removido backdrop-filter: blur(4px); - não necessário para contador */
   transition: all var(--transition-fast);
-  will-change: transform;
+  /* removido will-change: transform; */
 }
 
 .kanban-column:hover .kanban-column__count {
-  transform: scale(1.1);
+  transform: scale(1.05); /* reduzido de 1.1 para suavidade */
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -124,7 +122,7 @@
   align-items: flex-start;
   gap: 8px;
   transition: all var(--transition-fast);
-  will-change: transform;
+  /* removido will-change: transform; */
 }
 
 .kanban-column__drag-item:hover {
@@ -143,7 +141,7 @@
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   opacity: 0.7;
-  will-change: color, background, opacity;
+  /* removido will-change: color, background, opacity; */
 }
 
 .kanban-column__drag-handle:hover {
@@ -175,54 +173,20 @@
 
 /* Responsivo */
 @media (max-width: 1024px) {
-  .kanban-column {
-    max-width: 100%;
-    min-width: 280px;
-  }
-
-  .kanban-column__cards {
-    max-height: calc(100vh - 320px);
-  }
+  .kanban-column { max-width: 100%; min-width: 280px; }
+  .kanban-column__cards { max-height: calc(100vh - 320px); }
 }
-
 @media (max-width: 768px) {
-  .kanban-column {
-    max-width: none;
-    min-height: auto;
-    margin: 0;
-  }
-
-  .kanban-column__cards {
-    max-height: 320px;
-  }
-
-  .kanban-column__header {
-    padding: 14px 16px;
-  }
-
-  .kanban-column__title {
-    font-size: 0.875rem;
-  }
+  .kanban-column { max-width: none; min-height: auto; margin: 0; }
+  .kanban-column__cards { max-height: 320px; }
+  .kanban-column__header { padding: 14px 16px; }
+  .kanban-column__title { font-size: 0.875rem; }
 }
-
 @media (max-width: 480px) {
-  .kanban-column {
-    min-width: 100%;
-  }
-
-  .kanban-column__header {
-    padding: 12px 14px;
-  }
-
-  .kanban-column__title {
-    font-size: 0.8125rem;
-    letter-spacing: 0.5px;
-  }
-
-  .kanban-column__empty {
-    padding: 32px 12px;
-    font-size: 0.8125rem;
-  }
+  .kanban-column { min-width: 100%; }
+  .kanban-column__header { padding: 12px 14px; }
+  .kanban-column__title { font-size: 0.8125rem; letter-spacing: 0.5px; }
+  .kanban-column__empty { padding: 32px 12px; font-size: 0.8125rem; }
 }
 
 /* ===== DARK MODE (coluna) ===== */
@@ -230,61 +194,50 @@
   background: rgba(30, 41, 59, 0.85);
   border-color: rgba(148, 163, 184, 0.2);
 }
-
 :host-context(body.dark-mode) .kanban-column:hover {
   background: rgba(30, 41, 59, 0.95);
   border-color: rgba(59, 130, 246, 0.3);
 }
-
 :host-context(body.dark-mode) .kanban-column__empty {
   background: rgba(52, 65, 84, 0.6);
   border-color: rgba(148, 163, 184, 0.3);
   color: var(--color-text-light-tertiary);
 }
-
 :host-context(body.dark-mode) .kanban-column__empty:hover {
   border-color: var(--color-primary);
   background: rgba(52, 65, 84, 0.8);
   color: var(--color-primary-light);
 }
-
 :host-context(body.dark-mode) .kanban-column__drag-handle {
   color: rgba(148, 163, 184, 0.5);
 }
-
 :host-context(body.dark-mode) .kanban-column__drag-handle:hover {
   color: var(--color-primary-light);
   background: rgba(59, 130, 246, 0.15);
 }
-
 :host-context(body.dark-mode) .cdk-drag-placeholder {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(96, 165, 250, 0.2));
   border-color: var(--color-primary);
 }
-
 /* Headers Dark Mode */
 :host-context(body.dark-mode) .kanban-column--todo .kanban-column__header {
   background: linear-gradient(135deg, rgba(59, 10, 10, 0.95), rgba(92, 26, 26, 0.95));
   border-bottom-color: #ef4444;
   box-shadow: inset 0 2px 4px rgba(239, 68, 68, 0.15);
 }
-
 :host-context(body.dark-mode) .kanban-column--in-progress .kanban-column__header {
   background: linear-gradient(135deg, rgba(59, 26, 10, 0.95), rgba(92, 46, 26, 0.95));
   border-bottom-color: #f59e0b;
   box-shadow: inset 0 2px 4px rgba(245, 158, 11, 0.15);
 }
-
 :host-context(body.dark-mode) .kanban-column--done .kanban-column__header {
   background: linear-gradient(135deg, rgba(10, 46, 26, 0.95), rgba(26, 74, 46, 0.95));
   border-bottom-color: #22c55e;
   box-shadow: inset 0 2px 4px rgba(34, 197, 94, 0.15);
 }
-
 :host-context(body.dark-mode) .kanban-column__title {
   color: #f1f5f9;
 }
-
 :host-context(body.dark-mode) .kanban-column__count {
   background: rgba(255, 255, 255, 0.15);
   color: #e2e8f0;
