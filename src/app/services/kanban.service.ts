@@ -1,17 +1,28 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, computed, WritableSignal } from '@angular/core';
 import { Task, TASK_STATUS_ORDER, TaskStatus, TasksByColumn } from '../models/task.model';
 
 const STORAGE_KEY = 'kanban-tasks';
 
 @Injectable({ providedIn: 'root' })
 export class KanbanService {
-  private readonly tasksSubject = new BehaviorSubject<Task[]>(this.loadFromStorage());
+  /** Signal contendo a lista plana de todas as tarefas */
+  private readonly tasksSignal: WritableSignal<Task[]> = signal(this.loadFromStorage());
 
-  readonly tasks$: Observable<Task[]> = this.tasksSubject.asObservable();
+  /** Exposição read-only do estado */
+  readonly tasks = this.tasksSignal.asReadonly();
+
+  /** Tarefas agrupadas por coluna (computed — memoizado) */
+  readonly tasksByColumn = computed<TasksByColumn>(() => {
+    const tasks = this.tasksSignal();
+    return this.toTasksByColumn(tasks);
+  });
+
+  // Persistência é feita diretamente em updateTasks()
+  // Não usamos effect() aqui para evitar dependências circulares
+  // e manter o salvamento sob controle explícito.
 
   getTasks(): Task[] {
-    return this.tasksSubject.getValue();
+    return this.tasksSignal();
   }
 
   getTasksByStatus(status: TaskStatus): Task[] {
@@ -100,7 +111,7 @@ export class KanbanService {
   }
 
   private emptyColumns(): TasksByColumn {
-    return { todo: [], 'in-progress': [], done: [] };
+    return { todo: [], 'in-progress': [], 'on-hold': [], done: [] };
   }
 
   /** Garante order sequencial (0, 1, 2...) em cada coluna */
@@ -117,8 +128,9 @@ export class KanbanService {
     return result;
   }
 
+  /** Atualiza signal + localStorage em uma única operação síncrona */
   private updateTasks(tasks: Task[]): void {
-    this.tasksSubject.next(tasks);
+    this.tasksSignal.set(tasks);
     this.saveToStorage(tasks);
   }
 
@@ -147,6 +159,10 @@ export class KanbanService {
   }
 
   private saveToStorage(tasks: Task[]): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch {
+      // localStorage cheio ou indisponível — ignora silenciosamente
+    }
   }
 }

@@ -1,5 +1,9 @@
-<!-- Card com clique para abrir modal -->
-<article class="kanban-card" [class.kanban-card--editing]="isEditing" (click)="!isEditing && openModal()">
+<!-- Card com clique para abrir modal de detalhes -->
+<article
+  class="kanban-card"
+  [class.kanban-card--editing]="isEditing"
+  (click)="!isEditing && openDetailModal()"
+>
   @if (isEditing) {
     <div class="kanban-card__edit" (click)="$event.stopPropagation()" (keydown)="onEditKeydown($event)">
       <input
@@ -30,7 +34,7 @@
   } @else {
     <header class="kanban-card__header">
       <h3 class="kanban-card__title" [title]="task.title">
-        {{ shortTitle }}
+        {{ task.title | truncate:50 }}
       </h3>
       <div class="kanban-card__header-actions" (click)="$event.stopPropagation()">
         <button type="button" class="kanban-card__icon-btn" (click)="startEdit()" title="Editar">
@@ -42,21 +46,21 @@
       </div>
     </header>
 
-    @if (shortDescription) {
+    @if (task.description) {
       <p class="kanban-card__description" [title]="task.description">
-        {{ shortDescription }}
+        {{ task.description | truncate:80 }}
       </p>
     } @else {
       <p class="kanban-card__description--placeholder">Adicionar descrição...</p>
     }
 
     <footer class="kanban-card__actions" (click)="$event.stopPropagation()">
-      @if (canMoveBack) {
+      @if (canMoveBack()) {
         <button type="button" class="kanban-card__btn" (click)="onMoveBack()">
           <i class='bx bx-arrow-back'></i> Voltar
         </button>
       }
-      @if (canMoveForward) {
+      @if (canMoveForward()) {
         <button type="button" class="kanban-card__btn kanban-card__btn--primary" (click)="onMoveForward()">
           Avançar <i class='bx bx-arrow-forward'></i>
         </button>
@@ -64,27 +68,3 @@
     </footer>
   }
 </article>
-
-<!-- Modal de detalhes -->
-@if (showModal) {
-  <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>{{ task.title }}</h2>
-        <button class="modal-close" (click)="closeModal()">
-          <i class='bx bx-x'></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Descrição:</strong></p>
-        <p>{{ task.description || 'Sem descrição' }}</p>
-        <p><strong>Status:</strong> {{ task.status }}</p>
-        <p><strong>Criado em:</strong> {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-        <p><strong>ID:</strong> {{ task.id }}</p>
-      </div>
-      <div class="modal-footer">
-        <button class="modal-btn" (click)="closeModal()">Fechar</button>
-      </div>
-    </div>
-  </div>
-}

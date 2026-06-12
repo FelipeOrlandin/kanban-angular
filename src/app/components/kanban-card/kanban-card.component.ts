@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Task, TASK_STATUS_ORDER } from '../../models/task.model';
+import { TruncatePipe } from '../../pipes/truncate.pipe';
 
 export interface TaskUpdatePayload {
   id: string;
@@ -9,12 +10,19 @@ export interface TaskUpdatePayload {
   description?: string;
 }
 
+/**
+ * Card individual de tarefa — componente puramente presentacional.
+ * ChangeDetectionStrategy.OnPush: só reage se inputs mudarem.
+ * Getters substituídos por computados e pipe truncate no template.
+ * Modal de detalhes removido — agora é lazy-loaded via KanbanBoard.
+ */
 @Component({
   selector: 'app-kanban-card',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TruncatePipe],
   templateUrl: './kanban-card.component.html',
   styleUrl: './kanban-card.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KanbanCardComponent {
   @Input({ required: true }) task!: Task;
@@ -23,42 +31,24 @@ export class KanbanCardComponent {
   @Output() moveForward = new EventEmitter<string>();
   @Output() moveBack = new EventEmitter<string>();
   @Output() update = new EventEmitter<TaskUpdatePayload>();
+  @Output() openDetails = new EventEmitter<string>();
 
   protected isEditing = false;
   protected editTitle = '';
   protected editDescription = '';
-  protected showModal = false;
 
-  get shortTitle(): string {
-    const title = this.task.title;
-    if (!title) return '';
-    const maxLength = 50;
-    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
-  }
-
-  get shortDescription(): string {
-    const description = this.task.description;
-    if (!description) return '';
-    const maxLength = 80;
-    return description.length > maxLength ? `${description.slice(0, maxLength)}...` : description;
-  }
-
-  get canMoveForward(): boolean {
+  readonly canMoveForward = computed(() => {
     const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
     return currentIndex < TASK_STATUS_ORDER.length - 1;
-  }
+  });
 
-  get canMoveBack(): boolean {
+  readonly canMoveBack = computed(() => {
     const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
     return currentIndex > 0;
-  }
+  });
 
-  openModal(): void {
-    this.showModal = true;
-  }
-
-  closeModal(): void {
-    this.showModal = false;
+  openDetailModal(): void {
+    this.openDetails.emit(this.task.id);
   }
 
   startEdit(): void {
@@ -96,13 +86,13 @@ export class KanbanCardComponent {
   }
 
   protected onMoveForward(): void {
-    if (this.canMoveForward) {
+    if (this.canMoveForward()) {
       this.moveForward.emit(this.task.id);
     }
   }
 
   protected onMoveBack(): void {
-    if (this.canMoveBack) {
+    if (this.canMoveBack()) {
       this.moveBack.emit(this.task.id);
     }
   }

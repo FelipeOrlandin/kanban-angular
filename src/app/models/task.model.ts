@@ -1,5 +1,5 @@
 /** Status das colunas do quadro Kanban */
-export type TaskStatus = 'todo' | 'in-progress' | 'done';
+export type TaskStatus = 'todo' | 'in-progress' | 'on-hold' | 'done';
 
 /** Representa uma tarefa no quadro */
 export interface Task {
@@ -7,20 +7,21 @@ export interface Task {
   title: string;
   description?: string;
   status: TaskStatus;
-  order: number; // posição dentro da coluna (drag and drop)
-  createdAt: string; // ISO string para serialização no localStorage
+  order: number;
+  createdAt: string;
 }
 
-/** Mapa de tarefas agrupadas por coluna (usado pelo CDK drag-drop) */
+/** Mapa de tarefas agrupadas por coluna */
 export type TasksByColumn = Record<TaskStatus, Task[]>;
 
-/** Ordem das colunas para navegação avançar/recuar */
-export const TASK_STATUS_ORDER: TaskStatus[] = ['todo', 'in-progress', 'done'];
+/** Ordem das colunas */
+export const TASK_STATUS_ORDER: TaskStatus[] = ['todo', 'in-progress', 'on-hold', 'done'];
 
 /** Labels exibidos nas colunas */
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   todo: 'To Do',
   'in-progress': 'In Progress',
+  'on-hold': 'On Hold',
   done: 'Done',
 };
 
