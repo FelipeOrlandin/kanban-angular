@@ -55,12 +55,12 @@
     }
 
     <footer class="kanban-card__actions" (click)="$event.stopPropagation()">
-      @if (canMoveBack()) {
+      @if (canMoveBack) {
         <button type="button" class="kanban-card__btn" (click)="onMoveBack()">
           <i class='bx bx-arrow-back'></i> Voltar
         </button>
       }
-      @if (canMoveForward()) {
+      @if (canMoveForward) {
         <button type="button" class="kanban-card__btn kanban-card__btn--primary" (click)="onMoveForward()">
           Avançar <i class='bx bx-arrow-forward'></i>
         </button>

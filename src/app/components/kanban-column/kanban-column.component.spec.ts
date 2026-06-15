@@ -75,20 +75,23 @@ describe('KanbanColumnComponent', () => {
     });
 
     it('aplica classe CSS correta baseada no status', () => {
-      const column = fixture.debugElement.query(By.css('.kanban-column'));
+      let column = fixture.debugElement.query(By.css('.kanban-column'));
       expect(column.classes['kanban-column--todo']).toBeTrue();
 
-      component.status = 'in-progress';
+      // Use setInput so Angular's change detection picks up the change
+      fixture.componentRef.setInput('status', 'in-progress');
       fixture.detectChanges();
+      column = fixture.debugElement.query(By.css('.kanban-column'));
       expect(column.classes['kanban-column--in-progress']).toBeTrue();
 
-      component.status = 'done';
+      fixture.componentRef.setInput('status', 'done');
       fixture.detectChanges();
+      column = fixture.debugElement.query(By.css('.kanban-column'));
       expect(column.classes['kanban-column--done']).toBeTrue();
     });
 
     it('exibe mensagem "Nenhuma tarefa" quando tasks está vazio', () => {
-      component.tasks = [];
+      fixture.componentRef.setInput('tasks', []);
       fixture.detectChanges();
       const emptyMsg = fixture.debugElement.query(By.css('.kanban-column__empty'));
       expect(emptyMsg).toBeTruthy();
@@ -207,12 +210,15 @@ describe('KanbanColumnComponent', () => {
 
     describe('cdkDropList configuration', () => {
     it('possui cdkDropList com id baseado no status', () => {
-      const dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
+      let dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
       expect(dropList.attributes['id']).toBe('todo');
 
-      component.status = 'in-progress';
+      // Use setInput so Angular's change detection picks up the change
+      fixture.componentRef.setInput('status', 'in-progress');
       fixture.detectChanges();
+      // Re-query after change because Angular re-creates the element
+      dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
       expect(dropList.attributes['id']).toBe('in-progress');
     });
   });
-}); 
+});

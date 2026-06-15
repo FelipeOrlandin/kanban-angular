@@ -13,7 +13,7 @@
     <span class="kanban-column__count">{{ tasks.length }}</span>
   </header>
 
-  @if (useVirtualScroll()) {
+  @if (useVirtualScroll) {
     <!-- Virtual scrolling para listas longas (> 30 cards) -->
     <cdk-virtual-scroll-viewport
       class="kanban-column__cards kanban-column__cards--virtual"

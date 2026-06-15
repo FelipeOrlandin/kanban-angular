@@ -37,7 +37,9 @@ export class KanbanColumnComponent {
   readonly ITEM_SIZE = 140;
 
   /** Ativa virtual scrolling apenas se houver mais de 30 cards */
-  readonly useVirtualScroll = computed(() => this.tasks.length > 30);
+  get useVirtualScroll(): boolean {
+    return this.tasks.length > 30;
+  }
 
   /** trackBy para *cdkVirtualFor e *ngFor */
   trackTaskById(_index: number, task: Task): string {

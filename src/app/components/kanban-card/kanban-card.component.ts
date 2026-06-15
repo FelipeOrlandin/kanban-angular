@@ -37,15 +37,15 @@ export class KanbanCardComponent {
   protected editTitle = '';
   protected editDescription = '';
 
-  readonly canMoveForward = computed(() => {
+  get canMoveForward(): boolean {
     const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
     return currentIndex < TASK_STATUS_ORDER.length - 1;
-  });
+  }
 
-  readonly canMoveBack = computed(() => {
+  get canMoveBack(): boolean {
     const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
     return currentIndex > 0;
-  });
+  }
 
   openDetailModal(): void {
     this.openDetails.emit(this.task.id);
@@ -86,13 +86,13 @@ export class KanbanCardComponent {
   }
 
   protected onMoveForward(): void {
-    if (this.canMoveForward()) {
+    if (this.canMoveForward) {
       this.moveForward.emit(this.task.id);
     }
   }
 
   protected onMoveBack(): void {
-    if (this.canMoveBack()) {
+    if (this.canMoveBack) {
       this.moveBack.emit(this.task.id);
     }
   }

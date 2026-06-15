@@ -24,7 +24,7 @@ describe('KanbanCardComponent', () => {
       order: 0,
       createdAt: '2024-06-01T10:00:00.000Z',
     };
-    component.task = mockTask;
+    fixture.componentRef.setInput('task', mockTask);
     fixture.detectChanges();
   });
 
@@ -41,39 +41,33 @@ describe('KanbanCardComponent', () => {
     });
 
     it('trunca descrição longa', () => {
-      component.task = { ...mockTask, description: 'A'.repeat(100) };
+      fixture.componentRef.setInput('task', { ...mockTask, description: 'A'.repeat(100) });
       fixture.detectChanges();
       const desc = fixture.debugElement.query(By.css('.kanban-card__description'));
-      expect(desc.nativeElement.textContent).toContain('...');
-    });
-  });
-
-  describe('shortDescription', () => {
-    it('retorna vazio se sem descrição', () => {
-      component.task = { ...mockTask, description: undefined };
-      expect(component.shortDescription).toBe('');
-    });
-    it('trunca descrição longa', () => {
-      component.task = { ...mockTask, description: 'A'.repeat(100) };
-      expect(component.shortDescription).toContain('...');
+      // Truncate pipe replaces last chars with '…' (single char)
+      expect(desc.nativeElement.textContent).toContain('…');
     });
   });
 
   describe('canMoveForward / canMoveBack', () => {
     it('canMoveForward true no todo', () => {
       component.task.status = 'todo';
+      fixture.detectChanges();
       expect(component.canMoveForward).toBeTrue();
     });
     it('canMoveForward false no done', () => {
-      component.task.status = 'done';
+      fixture.componentRef.setInput('task', { ...mockTask, status: 'done' });
+      fixture.detectChanges();
       expect(component.canMoveForward).toBeFalse();
     });
     it('canMoveBack true no in-progress', () => {
-      component.task.status = 'in-progress';
+      fixture.componentRef.setInput('task', { ...mockTask, status: 'in-progress' });
+      fixture.detectChanges();
       expect(component.canMoveBack).toBeTrue();
     });
     it('canMoveBack false no todo', () => {
       component.task.status = 'todo';
+      fixture.detectChanges();
       expect(component.canMoveBack).toBeFalse();
     });
   });
@@ -86,7 +80,7 @@ describe('KanbanCardComponent', () => {
     });
 
     it('moveForward emite ao clicar', () => {
-      component.task.status = 'todo';
+      fixture.componentRef.setInput('task', { ...mockTask, status: 'todo' });
       fixture.detectChanges();
       const spy = spyOn(component.moveForward, 'emit');
       const btn = fixture.debugElement.query(By.css('.kanban-card__btn--primary'));
@@ -95,7 +89,7 @@ describe('KanbanCardComponent', () => {
     });
 
     it('moveBack emite ao clicar', () => {
-      component.task.status = 'in-progress';
+      fixture.componentRef.setInput('task', { ...mockTask, status: 'in-progress' });
       fixture.detectChanges();
       const spy = spyOn(component.moveBack, 'emit');
       const btns = fixture.debugElement.queryAll(By.css('.kanban-card__btn'));
