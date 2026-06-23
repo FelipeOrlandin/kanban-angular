@@ -20,21 +20,21 @@
   --border-hover: rgba(139, 149, 168, 0.18);
 
   /* Status colors */
-  --color-todo: #ef4444;
-  --color-todo-bg: rgba(239, 68, 68, 0.1);
-  --color-todo-border: rgba(239, 68, 68, 0.25);
+  --color-todo: #64748b;
+  --color-todo-bg: rgba(100, 116, 139, 0.08);
+  --color-todo-border: rgba(100, 116, 139, 0.2);
 
-  --color-progress: #f59e0b;
-  --color-progress-bg: rgba(245, 158, 11, 0.1);
-  --color-progress-border: rgba(245, 158, 11, 0.25);
+  --color-progress: #3b82f6;
+  --color-progress-bg: rgba(59, 130, 246, 0.08);
+  --color-progress-border: rgba(59, 130, 246, 0.2);
 
-  --color-hold: #8b5cf6;
-  --color-hold-bg: rgba(139, 92, 246, 0.1);
-  --color-hold-border: rgba(139, 92, 246, 0.25);
+  --color-hold: #f59e0b;
+  --color-hold-bg: rgba(245, 158, 11, 0.08);
+  --color-hold-border: rgba(245, 158, 11, 0.2);
 
-  --color-done: #22c55e;
-  --color-done-bg: rgba(34, 197, 94, 0.1);
-  --color-done-border: rgba(34, 197, 94, 0.25);
+  --color-done: #10b981;
+  --color-done-bg: rgba(16, 185, 129, 0.08);
+  --color-done-border: rgba(16, 185, 129, 0.2);
 
   /* Accent */
   --color-accent: #6366f1;
@@ -78,10 +78,10 @@ body.light-mode {
   --border-default: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(0, 0, 0, 0.14);
 
-  --color-todo-bg: rgba(239, 68, 68, 0.06);
-  --color-progress-bg: rgba(245, 158, 11, 0.06);
-  --color-hold-bg: rgba(139, 92, 246, 0.06);
-  --color-done-bg: rgba(34, 197, 94, 0.06);
+  --color-todo-bg: rgba(100, 116, 139, 0.06);
+  --color-progress-bg: rgba(59, 130, 246, 0.06);
+  --color-hold-bg: rgba(245, 158, 11, 0.06);
+  --color-done-bg: rgba(16, 185, 129, 0.06);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);

@@ -7,8 +7,8 @@
   font-size: 0.6875rem;
   font-weight: 600;
   color: var(--tag-color);
-  background: color-mix(in srgb, var(--tag-color) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--tag-color) 20%, transparent);
+  background: color-mix(in srgb, var(--tag-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tag-color) 15%, transparent);
   white-space: nowrap;
   line-height: 1;
   cursor: default;
@@ -22,14 +22,19 @@
 }
 
 .tag--clickable:hover {
-  background: color-mix(in srgb, var(--tag-color) 18%, transparent);
-  border-color: color-mix(in srgb, var(--tag-color) 35%, transparent);
+  background: color-mix(in srgb, var(--tag-color) 15%, transparent);
+  border-color: color-mix(in srgb, var(--tag-color) 30%, transparent);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--tag-color) 15%, transparent);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--tag-color) 12%, transparent);
 }
 
 .tag i {
   font-size: 0.75em;
+  line-height: 1;
+}
+
+.tag__emoji {
+  font-size: 0.7em;
   line-height: 1;
 }
 

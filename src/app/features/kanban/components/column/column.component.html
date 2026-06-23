@@ -10,11 +10,21 @@
       <span class="kanban-column__status-dot"></span>
       <h2 class="kanban-column__title">{{ title }}</h2>
     </div>
-    <span class="kanban-column__count">{{ tasks.length }}</span>
+    <div class="kanban-column__header-actions">
+      <button
+        class="kanban-column__sort-btn"
+        [class.kanban-column__sort-btn--active]="sortMode !== 'manual'"
+        (click)="cycleSort()"
+        type="button"
+        [title]="getSortLabel()"
+      >
+        <i class='bx {{ getSortIcon() }}'></i>
+      </button>
+      <span class="kanban-column__count">{{ tasks.length }}</span>
+    </div>
   </header>
 
   @if (useVirtualScroll) {
-    <!-- Virtual scrolling para listas longas (> 30 cards) -->
     <cdk-virtual-scroll-viewport
       class="kanban-column__cards kanban-column__cards--virtual"
       [itemSize]="ITEM_SIZE"
@@ -25,7 +35,6 @@
         class="kanban-column__drag-item"
         *cdkVirtualFor="let task of tasks; trackBy: trackTaskById"
         cdkDrag
-        [cdkDragDisabled]="dragDisabled()"
       >
         <app-kanban-card
           class="kanban-column__card"
@@ -44,17 +53,15 @@
       }
     </cdk-virtual-scroll-viewport>
   } @else {
-    <!-- Scroll normal para listas pequenas -->
     <div
       class="kanban-column__cards"
       cdkDropList
       [id]="status"
       [cdkDropListData]="tasks"
-      [cdkDropListDisabled]="dragDisabled()"
       (cdkDropListDropped)="onDrop($event)"
     >
       @for (task of tasks; track task.id) {
-        <div class="kanban-column__drag-item" cdkDrag [cdkDragDisabled]="dragDisabled()">
+        <div class="kanban-column__drag-item" cdkDrag>
           <app-kanban-card
             class="kanban-column__card"
             [task]="task"

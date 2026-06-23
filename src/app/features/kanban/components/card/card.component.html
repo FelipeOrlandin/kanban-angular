@@ -18,6 +18,21 @@
         placeholder="Descrição (opcional)"
         rows="3"
       ></textarea>
+      <div class="kanban-card__priority-edit">
+        <span class="kanban-card__priority-label">Prioridade:</span>
+        <app-select-popup
+          [options]="priorityOptions"
+          [currentValue]="editPriority"
+          (selected)="editPriority = $any($event)"
+        >
+          <app-tag
+            [label]="getPriorityLabel(editPriority)"
+            [icon]="getPriorityIcon(editPriority)"
+            [color]="getPriorityColor(editPriority)"
+            [clickable]="true"
+          ></app-tag>
+        </app-select-popup>
+      </div>
       <div class="kanban-card__edit-actions">
         <button type="button" class="kanban-card__btn" (click)="cancelEdit()">Cancelar</button>
         <button
@@ -73,7 +88,7 @@
         >
           <app-tag
             [label]="getStatusLabel(task.status)"
-            [icon]="'bx-circle'"
+            [icon]="getStatusIcon(task.status)"
             [color]="getStatusColor(task.status)"
             [clickable]="true"
           ></app-tag>

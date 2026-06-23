@@ -14,7 +14,11 @@
         [style.--option-color]="option.color"
         (click)="select(option.value, $event)"
       >
-        <i class="bx" [ngClass]="option.icon"></i>
+        @if (isEmoji(option.icon)) {
+          <span class="select-popup__emoji">{{ option.icon }}</span>
+        } @else {
+          <i class="bx" [ngClass]="option.icon"></i>
+        }
         <span>{{ option.label }}</span>
         @if (option.value === currentValue) {
           <i class='bx bx-check select-popup__check'></i>

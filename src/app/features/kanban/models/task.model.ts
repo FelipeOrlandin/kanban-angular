@@ -8,24 +8,24 @@ export type TaskPriority = 'low' | 'normal' | 'high' | 'critical';
 export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
   low: 'Baixa',
   normal: 'Normal',
-  high: 'Importante',
-  critical: 'Crítico',
+  high: 'Alta',
+  critical: 'Urgente',
 };
 
-/** Ícones Boxicons das prioridades */
+/** Ícones (emojis) das prioridades */
 export const TASK_PRIORITY_ICONS: Record<TaskPriority, string> = {
   low: 'bx-flag',
-  normal: 'bx-flag-checkered',
+  normal: 'bx-diamond',
   high: 'bx-error',
   critical: 'bx-error-circle',
 };
 
 /** Cores das prioridades */
 export const TASK_PRIORITY_COLORS: Record<TaskPriority, string> = {
-  low: '#22c55e',
-  normal: '#6366f1',
+  low: '#94a3b8',
+  normal: '#818cf8',
   high: '#f59e0b',
-  critical: '#ef4444',
+  critical: '#f43f5e',
 };
 
 /** Representa uma tarefa no quadro */
@@ -47,10 +47,18 @@ export const TASK_STATUS_ORDER: TaskStatus[] = ['todo', 'in-progress', 'on-hold'
 
 /** Labels exibidos nas colunas */
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
-  todo: 'To Do',
-  'in-progress': 'In Progress',
-  'on-hold': 'On Hold',
-  done: 'Done',
+  todo: 'Novo',
+  'in-progress': 'Em Andamento',
+  'on-hold': 'Aguardando Resposta',
+  done: 'Resolvido',
+};
+
+/** Ícones (emojis) dos status */
+export const TASK_STATUS_ICONS: Record<TaskStatus, string> = {
+  todo: 'bx-plus-circle',
+  'in-progress': 'bx-loader-alt',
+  'on-hold': 'bx-pause-circle',
+  done: 'bx-check-circle',
 };
 
 /** Modos de ordenação na camada de visualização */

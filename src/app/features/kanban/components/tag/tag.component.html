@@ -8,6 +8,10 @@
   [attr.tabindex]="clickable ? 0 : null"
   [attr.role]="clickable ? 'button' : null"
 >
-  <i class="bx" [ngClass]="icon"></i>
+  @if (isEmoji()) {
+    <span class="tag__emoji">{{ icon }}</span>
+  } @else {
+    <i class="bx" [ngClass]="icon"></i>
+  }
   <span class="tag__label">{{ label }}</span>
 </span>

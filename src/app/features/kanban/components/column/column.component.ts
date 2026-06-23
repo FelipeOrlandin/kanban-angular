@@ -1,14 +1,10 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, input, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Task, TaskStatus, TaskUpdatePayload, TaskPriority } from '../../models/task.model';
+import { Task, TaskStatus, TaskUpdatePayload, TaskPriority, SortMode } from '../../models/task.model';
 import { KanbanCardComponent } from '../card/card.component';
 
-/**
- * Coluna do Kanban com suporte a virtual scrolling (cdk-virtual-scroll-viewport)
- * para listas acima de 30 cards, e ChangeDetectionStrategy.OnPush.
- */
 @Component({
   selector: 'app-kanban-column',
   standalone: true,
@@ -21,9 +17,7 @@ export class KanbanColumnComponent {
   @Input({ required: true }) title!: string;
   @Input({ required: true }) status!: TaskStatus;
   @Input({ required: true }) tasks!: Task[];
-
-  /** Desabilita drag quando filtro/ordenação estão ativos */
-  dragDisabled = input(false, { alias: 'dragDisabled', transform: booleanAttribute });
+  @Input() sortMode: SortMode = 'manual';
 
   @Output() deleteTask = new EventEmitter<string>();
   @Output() moveForward = new EventEmitter<string>();
@@ -34,24 +28,38 @@ export class KanbanColumnComponent {
   @Output() updatePriority = new EventEmitter<{ id: string; priority: TaskPriority }>();
   @Output() updateStatus = new EventEmitter<{ id: string; status: TaskStatus }>();
   @Output() dropped = new EventEmitter<void>();
+  @Output() sortChange = new EventEmitter<SortMode>();
 
-  /** Altura do item virtual (em px) — altura fixa do card + gap */
   readonly ITEM_SIZE = 148;
 
-  /** Ativa virtual scrolling apenas se houver mais de 30 cards */
   get useVirtualScroll(): boolean {
     return this.tasks.length > 30;
   }
 
-  /** trackBy para *cdkVirtualFor e *ngFor */
   trackTaskById(_index: number, task: Task): string {
     return task.id;
   }
 
+  cycleSort(): void {
+    const current = this.sortMode;
+    if (current === 'manual') this.sortChange.emit('newest');
+    else if (current === 'newest') this.sortChange.emit('oldest');
+    else this.sortChange.emit('manual');
+  }
+
+  getSortIcon(): string {
+    if (this.sortMode === 'newest') return 'bx-sort-down';
+    if (this.sortMode === 'oldest') return 'bx-sort-up';
+    return 'bx-sort-alt-2';
+  }
+
+  getSortLabel(): string {
+    if (this.sortMode === 'newest') return 'Recentes';
+    if (this.sortMode === 'oldest') return 'Antigos';
+    return 'Manual';
+  }
+
   onDrop(event: CdkDragDrop<Task[]>): void {
-    if (this.dragDisabled()) {
-      return;
-    }
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

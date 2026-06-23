@@ -24,11 +24,12 @@ import {
 import { KanbanService } from '../../services/kanban.service';
 import { KanbanColumnComponent } from '../column/column.component';
 import { KanbanCardModalComponent } from '../card-modal/card-modal.component';
+import { CreateModalComponent } from '../create-modal/create-modal.component';
 
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule, KanbanColumnComponent, KanbanCardModalComponent],
+  imports: [CommonModule, FormsModule, DragDropModule, KanbanColumnComponent, KanbanCardModalComponent, CreateModalComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,12 +43,6 @@ export class KanbanBoardComponent implements OnInit {
     title: TASK_STATUS_LABELS[status],
   }));
 
-  readonly sortOptions: { value: SortMode; label: string }[] = [
-    { value: 'manual', label: 'Manual' },
-    { value: 'newest', label: 'Mais recentes' },
-    { value: 'oldest', label: 'Mais antigos' },
-  ];
-
   readonly searchFields: { value: SearchField; label: string }[] = [
     { value: 'all', label: 'Tudo' },
     { value: 'title', label: 'Título' },
@@ -55,23 +50,17 @@ export class KanbanBoardComponent implements OnInit {
   ];
 
   /** Signals */
-  readonly newTitle = signal('');
-  readonly newDescription = signal('');
   readonly searchText = signal('');
   readonly searchField = signal<SearchField>('all');
   readonly sortMode = signal<SortMode>('manual');
   readonly isDarkMode = signal(false);
+  readonly showCreateModal = signal(false);
 
   /** Modal state */
   protected selectedTaskId = signal<string | null>(null);
 
   /** Tasks do service */
   private readonly tasksByColumn = this.kanbanService.tasksByColumn;
-
-  /** Drag só quando não há filtro */
-  readonly isDragEnabled = computed(() => {
-    return !this.searchText().trim() && this.sortMode() === 'manual';
-  });
 
   readonly hasActiveFilters = computed(() => {
     return !!this.searchText().trim() || this.sortMode() !== 'manual';
@@ -85,19 +74,14 @@ export class KanbanBoardComponent implements OnInit {
   /** Filtragem + ordenação premium */
   readonly filteredAndSortedTasksByColumn = computed<TasksByColumn>(() => {
     const columns = this.tasksByColumn();
-    if (this.isDragEnabled()) {
-      return columns;
-    }
-
     const query = this.searchText().trim().toLowerCase();
     const field = this.searchField();
     const result: TasksByColumn = { todo: [], 'in-progress': [], 'on-hold': [], done: [] };
     const sort = this.sortMode();
 
     for (const status of TASK_STATUS_ORDER) {
-      let tasks = [...columns[status]];
+      let tasks = columns[status];
 
-      // Filtro por campo específico
       if (query) {
         tasks = tasks.filter((task) => {
           if (field === 'title') {
@@ -106,7 +90,6 @@ export class KanbanBoardComponent implements OnInit {
           if (field === 'description') {
             return task.description?.toLowerCase().includes(query) ?? false;
           }
-          // 'all'
           return (
             task.title.toLowerCase().includes(query) ||
             (task.description?.toLowerCase().includes(query) ?? false)
@@ -114,13 +97,10 @@ export class KanbanBoardComponent implements OnInit {
         });
       }
 
-      // Ordenação por data
       if (sort === 'newest') {
-        tasks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        tasks = [...tasks].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       } else if (sort === 'oldest') {
-        tasks.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      } else {
-        tasks.sort((a, b) => a.order - b.order);
+        tasks = [...tasks].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
       }
 
       result[status] = tasks;
@@ -130,7 +110,6 @@ export class KanbanBoardComponent implements OnInit {
   });
 
   readonly visibleTaskCount = computed(() => {
-    if (this.isDragEnabled()) return this.totalTaskCount();
     const filtered = this.filteredAndSortedTasksByColumn();
     return TASK_STATUS_ORDER.reduce((sum, status) => sum + filtered[status].length, 0);
   });
@@ -141,9 +120,6 @@ export class KanbanBoardComponent implements OnInit {
   }
   trackByTaskId(_index: number, task: Task): string {
     return task.id;
-  }
-  trackBySortOption(_index: number, option: { value: SortMode }): SortMode {
-    return option.value;
   }
   trackBySearchField(_index: number, option: { value: SearchField }): SearchField {
     return option.value;
@@ -161,34 +137,14 @@ export class KanbanBoardComponent implements OnInit {
     });
   }
 
-  /** Alterna ordenação: manual → newest → oldest → manual */
-  cycleSort(): void {
-    const current = this.sortMode();
-    if (current === 'manual') this.sortMode.set('newest');
-    else if (current === 'newest') this.sortMode.set('oldest');
-    else this.sortMode.set('manual');
-  }
-
-  /** Obtém label para o botão de ordenação */
-  getSortLabel(sort: SortMode): string {
-    const map: Record<SortMode, string> = {
-      manual: 'Manual',
-      newest: 'Recentes',
-      oldest: 'Antigos',
-    };
-    return map[sort];
-  }
-
   onColumnDrop(): void {
-    this.kanbanService.syncFromColumns(this.kanbanService.tasksByColumn());
+    const columns = this.filteredAndSortedTasksByColumn();
+    this.kanbanService.syncFromColumns(columns);
   }
 
-  onAddTask(): void {
-    const title = this.newTitle();
-    if (!title.trim()) return;
-    this.kanbanService.addTask(title, this.newDescription());
-    this.newTitle.set('');
-    this.newDescription.set('');
+  onCreateTask(event: { title: string; description?: string; priority: TaskPriority }): void {
+    this.kanbanService.addTask(event.title, event.description, event.priority);
+    this.showCreateModal.set(false);
   }
 
   onDeleteTask(taskId: string): void {
@@ -196,7 +152,7 @@ export class KanbanBoardComponent implements OnInit {
   }
 
   onUpdateTask(payload: TaskUpdatePayload): void {
-    this.kanbanService.updateTask(payload.id, payload.title, payload.description);
+    this.kanbanService.updateTask(payload.id, payload.title, payload.description, payload.priority);
     this.selectedTaskId.set(null);
   }
 

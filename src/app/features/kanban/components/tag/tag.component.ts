@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed } from '@angular/core';
 
 @Component({
   selector: 'app-tag',
@@ -17,6 +17,8 @@ export class TagComponent {
   @Input() clickable = false;
 
   @Output() clicked = new EventEmitter<void>();
+
+  readonly isEmoji = computed(() => !this.icon.startsWith('bx'));
 
   onClick(): void {
     if (this.clickable) {

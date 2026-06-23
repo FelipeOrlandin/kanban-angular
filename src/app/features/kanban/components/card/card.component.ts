@@ -11,6 +11,7 @@ import {
   TASK_PRIORITY_ICONS,
   TASK_PRIORITY_COLORS,
   TASK_STATUS_LABELS,
+  TASK_STATUS_ICONS,
 } from '../../models/task.model';
 import { TruncatePipe } from '../../../../shared/pipes/truncate.pipe';
 import { TagComponent } from '../tag/tag.component';
@@ -44,6 +45,7 @@ export class KanbanCardComponent {
   protected isEditing = false;
   protected editTitle = '';
   protected editDescription = '';
+  protected editPriority: TaskPriority = 'normal';
 
   get canMoveForward(): boolean {
     const currentIndex = TASK_STATUS_ORDER.indexOf(this.task.status);
@@ -62,6 +64,7 @@ export class KanbanCardComponent {
   startEdit(): void {
     this.editTitle = this.task.title;
     this.editDescription = this.task.description ?? '';
+    this.editPriority = this.task.priority;
     this.isEditing = true;
   }
 
@@ -77,6 +80,7 @@ export class KanbanCardComponent {
       id: this.task.id,
       title: trimmedTitle,
       description: this.editDescription?.trim() || undefined,
+      priority: this.editPriority,
     });
 
     this.isEditing = false;
@@ -118,7 +122,7 @@ export class KanbanCardComponent {
     return TASK_STATUS_ORDER.map(status => ({
       value: status,
       label: TASK_STATUS_LABELS[status],
-      icon: 'bx-circle',
+      icon: TASK_STATUS_ICONS[status],
       color: this.getStatusColor(status),
     }));
   }
@@ -139,12 +143,16 @@ export class KanbanCardComponent {
     return TASK_STATUS_LABELS[status];
   }
 
+  getStatusIcon(status: TaskStatus): string {
+    return TASK_STATUS_ICONS[status];
+  }
+
   getStatusColor(status: TaskStatus): string {
     const colors: Record<TaskStatus, string> = {
-      'todo': '#f43f5e',
-      'in-progress': '#f59e0b',
-      'on-hold': '#8b5cf6',
-      'done': '#22c55e',
+      'todo': '#64748b',
+      'in-progress': '#3b82f6',
+      'on-hold': '#f59e0b',
+      'done': '#10b981',
     };
     return colors[status];
   }

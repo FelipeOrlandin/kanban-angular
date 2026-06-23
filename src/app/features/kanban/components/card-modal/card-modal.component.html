@@ -28,10 +28,33 @@
           rows="4"
           (keydown)="onEditKeydown($event)"
         ></textarea>
+        <label class="modal-label">Prioridade</label>
+        <div class="modal-priority-selector">
+          <app-select-popup
+            [options]="priorityOptions"
+            [currentValue]="editPriority"
+            (selected)="editPriority = $any($event)"
+          >
+            <app-tag
+              [label]="getPriorityLabel(editPriority)"
+              [icon]="getPriorityIcon(editPriority)"
+              [color]="getPriorityColor(editPriority)"
+              [clickable]="true"
+            ></app-tag>
+          </app-select-popup>
+        </div>
       } @else {
         <p><strong>Descrição:</strong></p>
         <p>{{ task.description || 'Sem descrição' }}</p>
-        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Prioridade:</strong></p>
+        <div class="modal-priority-display">
+          <app-tag
+            [label]="getPriorityLabel(task.priority)"
+            [icon]="getPriorityIcon(task.priority)"
+            [color]="getPriorityColor(task.priority)"
+          ></app-tag>
+        </div>
+        <p><strong>Status:</strong> {{ getStatusLabel(task.status) }}</p>
         <p><strong>Criado em:</strong> {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
       }
     </div>

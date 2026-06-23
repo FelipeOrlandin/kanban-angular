@@ -16,39 +16,15 @@
     </div>
   </header>
 
-  <!-- ===== FORM ===== -->
-  <form class="kanban-board__form" (ngSubmit)="onAddTask()">
-    <div class="kanban-board__input-wrapper">
-      <i class='bx bx-plus kanban-board__input-icon'></i>
-      <input
-        type="text"
-        class="kanban-board__input"
-        placeholder="Título da tarefa"
-        [ngModel]="newTitle()"
-        (ngModelChange)="newTitle.set($event)"
-        name="title"
-        required
-      />
-    </div>
-    <div class="kanban-board__input-wrapper">
-      <i class='bx bx-detail kanban-board__input-icon'></i>
-      <input
-        type="text"
-        class="kanban-board__input"
-        placeholder="Descrição (opcional)"
-        [ngModel]="newDescription()"
-        (ngModelChange)="newDescription.set($event)"
-        name="description"
-      />
-    </div>
-    <button type="submit" class="kanban-board__submit" [disabled]="!newTitle().trim()">
-      + Adicionar
+  <!-- ===== ADD TASK BUTTON ===== -->
+  <div class="kanban-board__add-bar">
+    <button class="kanban-board__add-btn" (click)="showCreateModal.set(true)" type="button">
+      <i class='bx bx-plus'></i> Nova Tarefa
     </button>
-  </form>
+  </div>
 
-  <!-- ===== TOOLBAR PREMIUM ===== -->
+  <!-- ===== TOOLBAR ===== -->
   <div class="kanban-board__toolbar">
-    <!-- Busca com badges -->
     <div class="kanban-board__toolbar-group">
       <div class="kanban-board__search-box">
         <i class='bx bx-search search-box-icon'></i>
@@ -67,7 +43,6 @@
         }
       </div>
 
-      <!-- Badges de campo de busca -->
       <div class="search-badges">
         @for (opt of searchFields; track opt.value) {
           <button
@@ -81,37 +56,12 @@
         }
       </div>
     </div>
-
-    <!-- Ordenação por data com toggle -->
-    <div class="kanban-board__toolbar-group kanban-board__toolbar-group--right">
-      <span class="sort-label">Ordenar</span>
-      <button
-        class="sort-toggle"
-        (click)="cycleSort()"
-        type="button"
-        [class.sort-toggle--active]="sortMode() !== 'manual'"
-      >
-        @if (sortMode() === 'manual') {
-          <i class='bx bx-sort-alt-2'></i>
-        } @else if (sortMode() === 'newest') {
-          <i class='bx bx-sort-down'></i>
-        } @else {
-          <i class='bx bx-sort-up'></i>
-        }
-        {{ getSortLabel(sortMode()) }}
-      </button>
-    </div>
   </div>
 
   <!-- ===== COUNTER ===== -->
   <p class="kanban-board__counter">
     <span class="counter-dot"></span>
     {{ visibleTaskCount() }} de {{ totalTaskCount() }} tarefas
-    @if (!isDragEnabled()) {
-      <span class="kanban-board__counter-hint">
-        <i class='bx bx-block'></i> arrastar desabilitado
-      </span>
-    }
     @if (hasActiveFilters()) {
       <button class="counter-clear" (click)="searchText.set(''); sortMode.set('manual')" type="button">
         <i class='bx bx-x'></i> Limpar filtros
@@ -126,7 +76,8 @@
         [title]="column.title"
         [status]="column.status"
         [tasks]="filteredAndSortedTasksByColumn()[column.status]"
-        [dragDisabled]="!isDragEnabled()"
+        [sortMode]="sortMode()"
+        (sortChange)="sortMode.set($event)"
         (deleteTask)="onDeleteTask($event)"
         (moveForward)="onMoveForward($event)"
         (moveBack)="onMoveBack($event)"
@@ -139,7 +90,7 @@
     }
   </div>
 
-  <!-- ===== MODAL LAZY ===== -->
+  <!-- ===== MODAL DETALHES ===== -->
   @if (selectedTaskId(); as taskId) {
     @defer (on timer(0ms)) {
       @if (selectedTask) {
@@ -156,5 +107,13 @@
     } @loading {
       <div class="modal-loading-placeholder"></div>
     }
+  }
+
+  <!-- ===== MODAL CRIAÇÃO ===== -->
+  @if (showCreateModal()) {
+    <app-create-modal
+      (close)="showCreateModal.set(false)"
+      (create)="onCreateTask($event)"
+    />
   }
 </div>

@@ -1,0 +1,67 @@
+<div class="modal-overlay" (click)="onOverlayClick()">
+  <div class="modal-content" (click)="onContentClick($event)" (keydown)="onKeydown($event)">
+    <div class="modal-header">
+      <div class="modal-header__icon">
+        <i class='bx bx-task'></i>
+      </div>
+      <h2>Nova Tarefa</h2>
+      <button class="modal-close" (click)="onOverlayClick()" type="button">
+        <i class='bx bx-x'></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-field">
+        <label class="modal-label">Título <span class="modal-label__required">*</span></label>
+        <input
+          type="text"
+          class="modal-input"
+          [(ngModel)]="title"
+          placeholder="Ex: Implementar feature X"
+          autofocus
+        />
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">Descrição</label>
+        <textarea
+          class="modal-textarea"
+          [(ngModel)]="description"
+          placeholder="Detalhes adicionais (opcional)"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-label">Prioridade</label>
+        <div class="modal-priority-options">
+          @for (opt of priorityOptions; track opt.value) {
+            <button
+              type="button"
+              class="modal-priority-btn"
+              [class.modal-priority-btn--active]="priority === opt.value"
+              [style.--priority-color]="opt.color"
+              (click)="priority = $any(opt.value)"
+            >
+              <i class="bx" [ngClass]="opt.icon"></i>
+              <span>{{ opt.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="modal-btn" (click)="onOverlayClick()">Cancelar</button>
+      <button
+        type="button"
+        class="modal-btn modal-btn--primary"
+        [disabled]="!title.trim()"
+        (click)="onSubmit()"
+      >
+        <i class='bx bx-plus'></i>
+        Criar Tarefa
+      </button>
+    </div>
+  </div>
+</div>

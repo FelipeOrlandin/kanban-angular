@@ -82,6 +82,10 @@ export class SelectPopupComponent implements OnDestroy, AfterViewInit {
     this.close();
   }
 
+  isEmoji(icon: string): boolean {
+    return !icon.startsWith('bx');
+  }
+
   private showOverlay(): void {
     this.closeOverlay();
 
