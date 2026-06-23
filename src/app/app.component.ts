@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { KanbanBoardComponent } from './components/kanban-board/kanban-board.component';
+import { KanbanBoardComponent } from './features/kanban/components/board/board.component';
 
 @Component({
   selector: 'app-root',

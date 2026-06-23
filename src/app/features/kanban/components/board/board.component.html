@@ -1,0 +1,160 @@
+<div class="kanban-board">
+  <!-- ===== HEADER PREMIUM ===== -->
+  <header class="kanban-board__header">
+    <div class="kanban-board__header-left">
+      <div class="kanban-board__logo">K</div>
+      <h1 class="kanban-board__title">Kanban Pro</h1>
+    </div>
+    <div class="kanban-board__header-right">
+      <button class="kanban-board__theme-toggle" (click)="toggleTheme()" type="button">
+        @if (!isDarkMode()) {
+          <i class='bx bx-moon'></i> Dark
+        } @else {
+          <i class='bx bx-sun'></i> Light
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== FORM ===== -->
+  <form class="kanban-board__form" (ngSubmit)="onAddTask()">
+    <div class="kanban-board__input-wrapper">
+      <i class='bx bx-plus kanban-board__input-icon'></i>
+      <input
+        type="text"
+        class="kanban-board__input"
+        placeholder="Título da tarefa"
+        [ngModel]="newTitle()"
+        (ngModelChange)="newTitle.set($event)"
+        name="title"
+        required
+      />
+    </div>
+    <div class="kanban-board__input-wrapper">
+      <i class='bx bx-detail kanban-board__input-icon'></i>
+      <input
+        type="text"
+        class="kanban-board__input"
+        placeholder="Descrição (opcional)"
+        [ngModel]="newDescription()"
+        (ngModelChange)="newDescription.set($event)"
+        name="description"
+      />
+    </div>
+    <button type="submit" class="kanban-board__submit" [disabled]="!newTitle().trim()">
+      + Adicionar
+    </button>
+  </form>
+
+  <!-- ===== TOOLBAR PREMIUM ===== -->
+  <div class="kanban-board__toolbar">
+    <!-- Busca com badges -->
+    <div class="kanban-board__toolbar-group">
+      <div class="kanban-board__search-box">
+        <i class='bx bx-search search-box-icon'></i>
+        <input
+          type="search"
+          class="kanban-board__search"
+          placeholder="Buscar tarefas..."
+          [ngModel]="searchText()"
+          (ngModelChange)="searchText.set($event)"
+          name="search"
+        />
+        @if (searchText()) {
+          <button class="search-clear" (click)="searchText.set('')" type="button">
+            <i class='bx bx-x'></i>
+          </button>
+        }
+      </div>
+
+      <!-- Badges de campo de busca -->
+      <div class="search-badges">
+        @for (opt of searchFields; track opt.value) {
+          <button
+            class="search-badge"
+            [class.search-badge--active]="searchField() === opt.value"
+            (click)="searchField.set(opt.value)"
+            type="button"
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Ordenação por data com toggle -->
+    <div class="kanban-board__toolbar-group kanban-board__toolbar-group--right">
+      <span class="sort-label">Ordenar</span>
+      <button
+        class="sort-toggle"
+        (click)="cycleSort()"
+        type="button"
+        [class.sort-toggle--active]="sortMode() !== 'manual'"
+      >
+        @if (sortMode() === 'manual') {
+          <i class='bx bx-sort-alt-2'></i>
+        } @else if (sortMode() === 'newest') {
+          <i class='bx bx-sort-down'></i>
+        } @else {
+          <i class='bx bx-sort-up'></i>
+        }
+        {{ getSortLabel(sortMode()) }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== COUNTER ===== -->
+  <p class="kanban-board__counter">
+    <span class="counter-dot"></span>
+    {{ visibleTaskCount() }} de {{ totalTaskCount() }} tarefas
+    @if (!isDragEnabled()) {
+      <span class="kanban-board__counter-hint">
+        <i class='bx bx-block'></i> arrastar desabilitado
+      </span>
+    }
+    @if (hasActiveFilters()) {
+      <button class="counter-clear" (click)="searchText.set(''); sortMode.set('manual')" type="button">
+        <i class='bx bx-x'></i> Limpar filtros
+      </button>
+    }
+  </p>
+
+  <!-- ===== COLUMNS ===== -->
+  <div class="kanban-board__columns" cdkDropListGroup>
+    @for (column of columns; track column.status) {
+      <app-kanban-column
+        [title]="column.title"
+        [status]="column.status"
+        [tasks]="filteredAndSortedTasksByColumn()[column.status]"
+        [dragDisabled]="!isDragEnabled()"
+        (deleteTask)="onDeleteTask($event)"
+        (moveForward)="onMoveForward($event)"
+        (moveBack)="onMoveBack($event)"
+        (updateTask)="onUpdateTask($event)"
+        (openDetails)="onOpenDetails($event)"
+        (updatePriority)="onUpdatePriority($event)"
+        (updateStatus)="onUpdateStatus($event)"
+        (dropped)="onColumnDrop()"
+      />
+    }
+  </div>
+
+  <!-- ===== MODAL LAZY ===== -->
+  @if (selectedTaskId(); as taskId) {
+    @defer (on timer(0ms)) {
+      @if (selectedTask) {
+        <app-kanban-card-modal
+          [task]="selectedTask"
+          [statuses]="columns"
+          (close)="closeModal()"
+          (update)="onModalUpdate($event)"
+          (moveToStatus)="onModalMoveToStatus($event)"
+        />
+      }
+    } @placeholder {
+      <div class="modal-loading-placeholder"></div>
+    } @loading {
+      <div class="modal-loading-placeholder"></div>
+    }
+  }
+</div>

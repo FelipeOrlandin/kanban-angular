@@ -1,0 +1,97 @@
+<article
+  class="kanban-card"
+  [class.kanban-card--editing]="isEditing"
+  (click)="!isEditing && openDetailModal()"
+>
+  @if (isEditing) {
+    <div class="kanban-card__edit" (click)="$event.stopPropagation()" (keydown)="onEditKeydown($event)">
+      <input
+        type="text"
+        class="kanban-card__input"
+        [(ngModel)]="editTitle"
+        placeholder="Título *"
+        autofocus
+      />
+      <textarea
+        class="kanban-card__textarea"
+        [(ngModel)]="editDescription"
+        placeholder="Descrição (opcional)"
+        rows="3"
+      ></textarea>
+      <div class="kanban-card__edit-actions">
+        <button type="button" class="kanban-card__btn" (click)="cancelEdit()">Cancelar</button>
+        <button
+          type="button"
+          class="kanban-card__btn kanban-card__btn--primary"
+          [disabled]="!editTitle.trim()"
+          (click)="saveEdit()"
+        >
+          Salvar
+        </button>
+      </div>
+    </div>
+  } @else {
+    <header class="kanban-card__header">
+      <h3 class="kanban-card__title" [title]="task.title">
+        {{ task.title | truncate:50 }}
+      </h3>
+      <div class="kanban-card__header-actions" (click)="$event.stopPropagation()">
+        <button type="button" class="kanban-card__icon-btn" (click)="startEdit()" title="Editar">
+          <i class='bx bx-edit'></i>
+        </button>
+        <button type="button" class="kanban-card__delete" (click)="onDelete()" title="Excluir">
+          <i class='bx bx-trash'></i>
+        </button>
+      </div>
+    </header>
+
+    @if (task.description) {
+      <p class="kanban-card__description" [title]="task.description">
+        {{ task.description | truncate:80 }}
+      </p>
+    }
+
+    <div class="kanban-card__meta" (click)="$event.stopPropagation()">
+      <div class="kanban-card__tags">
+        <app-select-popup
+          [options]="priorityOptions"
+          [currentValue]="task.priority"
+          (selected)="onPriorityChange($event)"
+        >
+          <app-tag
+            [label]="getPriorityLabel(task.priority)"
+            [icon]="getPriorityIcon(task.priority)"
+            [color]="getPriorityColor(task.priority)"
+            [clickable]="true"
+          ></app-tag>
+        </app-select-popup>
+
+        <app-select-popup
+          [options]="statusOptions"
+          [currentValue]="task.status"
+          (selected)="onStatusChange($event)"
+        >
+          <app-tag
+            [label]="getStatusLabel(task.status)"
+            [icon]="'bx-circle'"
+            [color]="getStatusColor(task.status)"
+            [clickable]="true"
+          ></app-tag>
+        </app-select-popup>
+      </div>
+
+      <div class="kanban-card__nav">
+        @if (canMoveBack) {
+          <button type="button" class="kanban-card__nav-btn" (click)="onMoveBack()" title="Mover para trás">
+            <i class='bx bx-left-arrow-alt'></i>
+          </button>
+        }
+        @if (canMoveForward) {
+          <button type="button" class="kanban-card__nav-btn kanban-card__nav-btn--forward" (click)="onMoveForward()" title="Mover para frente">
+            <i class='bx bx-right-arrow-alt'></i>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</article>

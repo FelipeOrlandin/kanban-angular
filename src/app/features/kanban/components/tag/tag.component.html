@@ -1,0 +1,13 @@
+<span
+  class="tag"
+  [class.tag--sm]="size === 'sm'"
+  [class.tag--md]="size === 'md'"
+  [class.tag--clickable]="clickable"
+  [style.--tag-color]="color"
+  (click)="onClick()"
+  [attr.tabindex]="clickable ? 0 : null"
+  [attr.role]="clickable ? 'button' : null"
+>
+  <i class="bx" [ngClass]="icon"></i>
+  <span class="tag__label">{{ label }}</span>
+</span>

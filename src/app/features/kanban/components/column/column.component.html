@@ -1,0 +1,75 @@
+<section
+  class="kanban-column"
+  [class.kanban-column--todo]="status === 'todo'"
+  [class.kanban-column--in-progress]="status === 'in-progress'"
+  [class.kanban-column--on-hold]="status === 'on-hold'"
+  [class.kanban-column--done]="status === 'done'"
+>
+  <header class="kanban-column__header">
+    <div class="kanban-column__title-wrapper">
+      <span class="kanban-column__status-dot"></span>
+      <h2 class="kanban-column__title">{{ title }}</h2>
+    </div>
+    <span class="kanban-column__count">{{ tasks.length }}</span>
+  </header>
+
+  @if (useVirtualScroll) {
+    <!-- Virtual scrolling para listas longas (> 30 cards) -->
+    <cdk-virtual-scroll-viewport
+      class="kanban-column__cards kanban-column__cards--virtual"
+      [itemSize]="ITEM_SIZE"
+      [minBufferPx]="280"
+      [maxBufferPx]="560"
+    >
+      <div
+        class="kanban-column__drag-item"
+        *cdkVirtualFor="let task of tasks; trackBy: trackTaskById"
+        cdkDrag
+        [cdkDragDisabled]="dragDisabled()"
+      >
+        <app-kanban-card
+          class="kanban-column__card"
+          [task]="task"
+          (delete)="deleteTask.emit($event)"
+          (moveForward)="moveForward.emit($event)"
+          (moveBack)="moveBack.emit($event)"
+          (update)="updateTask.emit($event)"
+          (openDetails)="openDetails.emit($event)"
+          (updatePriority)="updatePriority.emit($event)"
+          (updateStatus)="updateStatus.emit($event)"
+        />
+      </div>
+      @if (tasks.length === 0) {
+        <p class="kanban-column__empty">Nenhuma tarefa</p>
+      }
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    <!-- Scroll normal para listas pequenas -->
+    <div
+      class="kanban-column__cards"
+      cdkDropList
+      [id]="status"
+      [cdkDropListData]="tasks"
+      [cdkDropListDisabled]="dragDisabled()"
+      (cdkDropListDropped)="onDrop($event)"
+    >
+      @for (task of tasks; track task.id) {
+        <div class="kanban-column__drag-item" cdkDrag [cdkDragDisabled]="dragDisabled()">
+          <app-kanban-card
+            class="kanban-column__card"
+            [task]="task"
+            (delete)="deleteTask.emit($event)"
+            (moveForward)="moveForward.emit($event)"
+            (moveBack)="moveBack.emit($event)"
+            (update)="updateTask.emit($event)"
+            (openDetails)="openDetails.emit($event)"
+            (updatePriority)="updatePriority.emit($event)"
+            (updateStatus)="updateStatus.emit($event)"
+          />
+        </div>
+      } @empty {
+        <p class="kanban-column__empty">Nenhuma tarefa</p>
+      }
+    </div>
+  }
+</section>
