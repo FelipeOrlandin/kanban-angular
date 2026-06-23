@@ -26,6 +26,45 @@
   flex-shrink: 0;
 }
 
+.kanban-column__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kanban-column__sort-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: all var(--transition);
+}
+
+.kanban-column__sort-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+}
+
+.kanban-column__sort-btn--active {
+  background: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.kanban-column__sort-btn--active:hover {
+  background: var(--color-accent-bg);
+  border-color: var(--color-accent);
+  color: var(--color-accent-hover);
+}
+
 .kanban-column--todo .kanban-column__header { border-bottom-color: var(--color-todo); }
 .kanban-column--in-progress .kanban-column__header { border-bottom-color: var(--color-progress); }
 .kanban-column--on-hold .kanban-column__header { border-bottom-color: var(--color-hold); }

@@ -89,7 +89,7 @@ export class KanbanService {
     this.updateTasks(this.normalizeTasks(updated));
   }
 
-  updateTask(taskId: string, title: string, description?: string): void {
+  updateTask(taskId: string, title: string, description?: string, priority?: TaskPriority): void {
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
       return;
@@ -101,6 +101,7 @@ export class KanbanService {
             ...task,
             title: trimmedTitle,
             description: description?.trim() || undefined,
+            ...(priority !== undefined && { priority }),
           }
         : task
     );

@@ -79,7 +79,6 @@ describe('KanbanColumnComponent', () => {
       let column = fixture.debugElement.query(By.css('.kanban-column'));
       expect(column.classes['kanban-column--todo']).toBeTrue();
 
-      // Use setInput so Angular's change detection picks up the change
       fixture.componentRef.setInput('status', 'in-progress');
       fixture.detectChanges();
       column = fixture.debugElement.query(By.css('.kanban-column'));
@@ -98,35 +97,36 @@ describe('KanbanColumnComponent', () => {
       expect(emptyMsg).toBeTruthy();
       expect(emptyMsg.nativeElement.textContent).toContain('Nenhuma tarefa');
     });
-
-    it('aplica cursor grab quando dragDisabled é false', () => {
-      fixture.componentRef.setInput('dragDisabled', false);
-      fixture.detectChanges();
-      const dragItems = fixture.debugElement.queryAll(By.css('.kanban-column__drag-item'));
-      expect(dragItems.length).toBe(2);
-    });
-
-    it('aplica cursor default quando dragDisabled é true', () => {
-      fixture.componentRef.setInput('dragDisabled', true);
-      fixture.detectChanges();
-      const dragItems = fixture.debugElement.queryAll(By.css('.kanban-column__drag-item'));
-      expect(dragItems.length).toBe(2);
-    });
   });
 
-  describe('dragDisabled input signal', () => {
-    it('dragDisabled deve ser false por padrão', () => {
-      expect(component.dragDisabled()).toBeFalse();
+  describe('sort button', () => {
+    it('exibe botão de sort no header', () => {
+      const sortBtn = fixture.debugElement.query(By.css('.kanban-column__sort-btn'));
+      expect(sortBtn).toBeTruthy();
     });
 
-    it('dragDisabled pode ser alterado via componentRef.setInput', () => {
-      fixture.componentRef.setInput('dragDisabled', true);
-      fixture.detectChanges();
-      expect(component.dragDisabled()).toBeTrue();
+    it('emite sortChange ao clicar no botão de sort', () => {
+      const sortSpy = spyOn(component.sortChange, 'emit');
+      const sortBtn = fixture.debugElement.query(By.css('.kanban-column__sort-btn'));
+      sortBtn.triggerEventHandler('click', null);
+      expect(sortSpy).toHaveBeenCalledWith('newest');
+    });
 
-      fixture.componentRef.setInput('dragDisabled', false);
-      fixture.detectChanges();
-      expect(component.dragDisabled()).toBeFalse();
+    it('alterna entre manual -> newest -> oldest -> manual', () => {
+      const sortSpy = spyOn(component.sortChange, 'emit');
+      const sortBtn = fixture.debugElement.query(By.css('.kanban-column__sort-btn'));
+
+      component.sortMode = 'manual';
+      sortBtn.triggerEventHandler('click', null);
+      expect(sortSpy).toHaveBeenCalledWith('newest');
+
+      component.sortMode = 'newest';
+      sortBtn.triggerEventHandler('click', null);
+      expect(sortSpy).toHaveBeenCalledWith('oldest');
+
+      component.sortMode = 'oldest';
+      sortBtn.triggerEventHandler('click', null);
+      expect(sortSpy).toHaveBeenCalledWith('manual');
     });
   });
 
@@ -184,40 +184,15 @@ describe('KanbanColumnComponent', () => {
       expect(inProgressTasks.length).toBe(1);
       expect(inProgressTasks[0].id).toBe('move-1');
     });
-
-    it('não emite dropped quando dragDisabled está ativo', () => {
-      fixture.componentRef.setInput('dragDisabled', true);
-      fixture.detectChanges();
-
-      const droppedSpy = spyOn(component.dropped, 'emit');
-      const columnTasks = [...tasks];
-
-      component.onDrop(createDropEvent(columnTasks, columnTasks, 0, 1, true));
-
-      expect(droppedSpy).not.toHaveBeenCalled();
-      expect(columnTasks.map((t) => t.id)).toEqual(['1', '2']);
-    });
-
-    it('não modifica arrays quando dragDisabled está ativo', () => {
-      fixture.componentRef.setInput('dragDisabled', true);
-      const originalOrder = [...tasks];
-
-      const columnTasks = [...tasks];
-      component.onDrop(createDropEvent(columnTasks, columnTasks, 0, 1, true));
-
-      expect(columnTasks.map((t) => t.id)).toEqual(originalOrder.map((t) => t.id));
-    });
   });
 
-    describe('cdkDropList configuration', () => {
+  describe('cdkDropList configuration', () => {
     it('possui cdkDropList com id baseado no status', () => {
       let dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
       expect(dropList.attributes['id']).toBe('todo');
 
-      // Use setInput so Angular's change detection picks up the change
       fixture.componentRef.setInput('status', 'in-progress');
       fixture.detectChanges();
-      // Re-query after change because Angular re-creates the element
       dropList = fixture.debugElement.query(By.css('[cdkDropList]'));
       expect(dropList.attributes['id']).toBe('in-progress');
     });

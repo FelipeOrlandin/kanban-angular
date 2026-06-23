@@ -57,7 +57,6 @@ describe('KanbanBoardComponent', () => {
       'toTasksByColumn',
     ]);
 
-    // tasksByColumn must be a Signal (a function that returns the value when called)
     const tasksByColumnSignal = signal(toTasksByColumn(mockTasks));
     Object.defineProperty(mockKanbanService, 'tasksByColumn', {
       get: () => tasksByColumnSignal,
@@ -98,29 +97,6 @@ describe('KanbanBoardComponent', () => {
     });
   });
 
-  describe('isDragEnabled', () => {
-    it('should return true when search is empty and sort is manual', () => {
-      component.searchText.set('');
-      component.sortMode.set('manual');
-      fixture.detectChanges();
-      expect(component.isDragEnabled()).toBeTrue();
-    });
-
-    it('should return false when search has text', () => {
-      component.searchText.set('search text');
-      component.sortMode.set('manual');
-      fixture.detectChanges();
-      expect(component.isDragEnabled()).toBeFalse();
-    });
-
-    it('should return false when sort mode is not manual', () => {
-      component.searchText.set('');
-      component.sortMode.set('newest');
-      fixture.detectChanges();
-      expect(component.isDragEnabled()).toBeFalse();
-    });
-  });
-
   describe('totalTaskCount', () => {
     it('should return total count of all tasks', () => {
       expect(component.totalTaskCount()).toBe(3);
@@ -128,7 +104,7 @@ describe('KanbanBoardComponent', () => {
   });
 
   describe('visibleTaskCount', () => {
-    it('should return total count when drag is enabled', () => {
+    it('should return total count when no filters', () => {
       component.searchText.set('');
       component.sortMode.set('manual');
       fixture.detectChanges();
@@ -195,27 +171,16 @@ describe('KanbanBoardComponent', () => {
     });
   });
 
-  describe('onAddTask', () => {
-    it('should call kanbanService.addTask with title and description', () => {
-      component.newTitle.set('New Task');
-      component.newDescription.set('New Description');
-      component.onAddTask();
-      expect(mockKanbanService.addTask).toHaveBeenCalledWith('New Task', 'New Description');
+  describe('onCreateTask', () => {
+    it('should call kanbanService.addTask with title, description and priority', () => {
+      component.onCreateTask({ title: 'New Task', description: 'New Description', priority: 'high' });
+      expect(mockKanbanService.addTask).toHaveBeenCalledWith('New Task', 'New Description', 'high');
     });
 
-    it('should clear newTitle and newDescription after adding', () => {
-      component.newTitle.set('New Task');
-      component.newDescription.set('New Description');
-      component.onAddTask();
-      expect(component.newTitle()).toBe('');
-      expect(component.newDescription()).toBe('');
-    });
-
-    it('should not add task if title is empty', () => {
-      component.newTitle.set('   ');
-      component.newDescription.set('Description');
-      component.onAddTask();
-      expect(mockKanbanService.addTask).not.toHaveBeenCalled();
+    it('should close modal after creating', () => {
+      component.showCreateModal.set(true);
+      component.onCreateTask({ title: 'New Task', priority: 'normal' });
+      expect(component.showCreateModal()).toBeFalse();
     });
   });
 
@@ -227,10 +192,10 @@ describe('KanbanBoardComponent', () => {
   });
 
   describe('onUpdateTask', () => {
-    it('should call kanbanService.updateTask with payload', () => {
-      const payload = { id: 'task-1', title: 'Updated', description: 'Updated Desc' };
+    it('should call kanbanService.updateTask with payload including priority', () => {
+      const payload = { id: 'task-1', title: 'Updated', description: 'Updated Desc', priority: 'critical' as const };
       component.onUpdateTask(payload);
-      expect(mockKanbanService.updateTask).toHaveBeenCalledWith('task-1', 'Updated', 'Updated Desc');
+      expect(mockKanbanService.updateTask).toHaveBeenCalledWith('task-1', 'Updated', 'Updated Desc', 'critical');
     });
   });
 
@@ -305,19 +270,6 @@ describe('KanbanBoardComponent', () => {
     it('should have correct column titles', () => {
       const todoCol = component.columns.find((col) => col.status === 'todo');
       expect(todoCol?.title).toBe('To Do');
-    });
-  });
-
-  describe('sortOptions property', () => {
-    it('should have 3 sort options', () => {
-      expect(component.sortOptions.length).toBe(3);
-    });
-
-    it('should have correct sort option values', () => {
-      const values = component.sortOptions.map((opt) => opt.value);
-      expect(values).toContain('manual');
-      expect(values).toContain('newest');
-      expect(values).toContain('oldest');
     });
   });
 

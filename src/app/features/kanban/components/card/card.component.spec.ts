@@ -117,7 +117,7 @@ describe('KanbanCardComponent', () => {
       (component as any).editTitle = 'Novo';
       (component as any).editDescription = 'Desc';
       component.saveEdit();
-      expect(spy).toHaveBeenCalledWith({ id: 'card-1', title: 'Novo', description: 'Desc' });
+      expect(spy).toHaveBeenCalledWith({ id: 'card-1', title: 'Novo', description: 'Desc', priority: 'normal' });
       expect((component as any).isEditing).toBeFalse();
     });
 
