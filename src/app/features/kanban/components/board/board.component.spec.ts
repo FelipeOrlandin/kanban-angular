@@ -269,7 +269,7 @@ describe('KanbanBoardComponent', () => {
 
     it('should have correct column titles', () => {
       const todoCol = component.columns.find((col) => col.status === 'todo');
-      expect(todoCol?.title).toBe('To Do');
+      expect(todoCol?.title).toBe('Novo');
     });
   });
 
