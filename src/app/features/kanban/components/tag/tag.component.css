@@ -13,7 +13,7 @@
   line-height: 1;
   cursor: default;
   transition: all var(--transition);
-  height: 24px;
+  height: 26px;
   box-sizing: border-box;
 }
 
@@ -29,12 +29,12 @@
 }
 
 .tag i {
-  font-size: 0.75em;
+  font-size: 0.9em;
   line-height: 1;
 }
 
 .tag__emoji {
-  font-size: 0.7em;
+  font-size: 0.85em;
   line-height: 1;
 }
 

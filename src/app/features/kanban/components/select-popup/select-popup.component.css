@@ -59,12 +59,12 @@
 }
 
 .select-popup__option i:first-child {
-  font-size: 1rem;
+  font-size: 1.125rem;
   color: var(--option-color);
 }
 
 .select-popup__emoji {
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1;
 }
 
